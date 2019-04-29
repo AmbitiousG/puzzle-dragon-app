@@ -12,7 +12,7 @@ const fetchMonster = async (id) => {
 }
 const fetchMonsters = async (ids) => {
   for (id of ids) {
-    log(chalk.green(`fetch monster(${id}):`));
+    log(chalk.green(`fetch monster[id: ${id}]:`));
     const $ = await getMonsterDetail(id);
     log(chalk.green('fetch done'));
     // log(chalk.blue('monster detail:'), $);

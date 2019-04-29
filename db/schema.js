@@ -36,6 +36,7 @@ const monsterActiveSkillSchema = new mongoose.Schema({
   },
   skill_name: String,
   skill_description: String,
+  skill_description_cn: String,
   skill_init_turn: Number,
   skill_max_turn: Number
 });
@@ -47,7 +48,8 @@ const monsterLeaderSkillSchema = new mongoose.Schema({
     index: true
   },
   skill_name: String,
-  skill_description: String
+  skill_description: String,
+  skill_description_cn: String
 });
 
 const monsterAwokenSkillSchema = new mongoose.Schema({
@@ -80,6 +82,7 @@ const monsterSchema = new mongoose.Schema({
   monster_avatar_base64: String,
   monster_image_base64: String,
   name: String,
+  name_cn: String,
   monster_attr: {type: objectIdType, ref: "MonsterAttr"},
   monster_sub_attr: {type: objectIdType, ref: "MonsterAttr"},
   series: {type: objectIdType, ref: "MonsterSeries"},
@@ -129,6 +132,7 @@ const MonsterAttr = mongoose.model("MonsterAttr", monsterAttrSchema);
 const MonsterSeries = mongoose.model("MonsterSeries", monsterSeriesSchema);
 const ActiveSkill = mongoose.model("ActiveSkill", monsterActiveSkillSchema);
 const LeaderSkill = mongoose.model("LeaderSkill", monsterLeaderSkillSchema);
+const AwokenSkill = mongoose.model("LeaderSkill", monsterAwokenSkillSchema);
 const Dungeon = mongoose.model("Dungeon", dungeonSchema);
 const Monster = mongoose.model("Monster", monsterSchema);
 
@@ -137,5 +141,6 @@ module.exports.MonsterAttr = MonsterAttr;
 module.exports.MonsterSeries = MonsterSeries;
 module.exports.ActiveSkill = ActiveSkill;
 module.exports.LeaderSkill = LeaderSkill;
+module.exports.AwokenSkill = AwokenSkill;
 module.exports.Dungeon = Dungeon;
 module.exports.Monster = Monster;
