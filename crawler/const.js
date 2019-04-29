@@ -1,0 +1,4 @@
+module.exports = {
+  PARSE_MONSTER_FROM_DB: 1,
+  PARSE_MONSTER_FROM_HTML: 2,
+}
