@@ -14,14 +14,14 @@ module.exports = class Monster {
   processCheerio($) {
     this.name = _.trim($('h3').text()).replace(/^No\.\d+ - /, '');
     this.name_cn = $('h2').text();
-    console.log(this.name, this.name_cn);
+    // console.log(this.plainData);
   }
 
   get plainData() {
     return {
       id: this.id,
-      name: this.name,
-      name_cn: this.name_cn
+      name: this.name + this.id,
+      name_cn: this.name_cn + this.id
     };
   }
 }

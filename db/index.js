@@ -4,10 +4,28 @@ const mongoose = require('mongoose');
 const dbConfig = require('../db-config.json');
 const schemas = require('./schema');
 
-const conn = mongoose.connection;
+// const conn = mongoose.connection;
 
 module.exports.saveMonsters = async monsters => {
-  await (() => {})();
+  try {
+    const bulkOp = schemas.Monster.collection.initializeOrderedBulkOp();
+    for (const monster of monsters) {
+      console.log(monster);
+      // bulkOp.find({ id: monster.id }).upsert().update({
+      //   $set: {name: "agbab"}
+      // });
+      bulkOp.find({ id: monster.id }).upsert().insert(monster);
+    }
+    await bulkOp.execute();
+    return true;
+    // return await schemas.Monster.collection.insertMany(monsters, {
+    //   ordered: false // 插入失败则跳过
+    // })
+  }
+  catch (e) {
+    console.log(e);
+    return false;
+  }
 }
 
 // const saveArticles = async function (articles, category) {
@@ -62,20 +80,36 @@ module.exports.saveMonsters = async monsters => {
 //     }).sort({item_id: -1}).populate('label').limit(10).exec();
 // }
 
-module.exports.conn = function (cb, isReadonly = false) {
-  mongoose.connect(dbConfig.server + '/' + dbConfig.db, {
+// module.exports.conn = function (cb, isReadonly = false) {
+//   mongoose.connect(dbConfig.server + '/' + dbConfig.db, {
+//     user: isReadonly ? dbConfig.readonly_user : dbConfig.user,
+//     pass: isReadonly ? dbConfig.readonly_pwd : dbConfig.pwd,
+//   });
+//   conn.on('error', console.error.bind(console, 'connection error:'))
+//   conn.on('disconnected', () => console.log('disconnected from ggc!'));
+//   conn.on('open', () => {
+//     console.log('ggc connected!');
+//     cb && cb();
+//     // console.log(Article.find({}).exec(arr => console.log(arr)))
+//   });
+// };
+module.exports.connDB = async (isReadonly = false) => {
+  const dbUrl = `${dbConfig.server}/${dbConfig.db}`;
+  const connInstance = await mongoose.connect(dbUrl, {
     user: isReadonly ? dbConfig.readonly_user : dbConfig.user,
     pass: isReadonly ? dbConfig.readonly_pwd : dbConfig.pwd,
+    useCreateIndex: true,
+    useNewUrlParser: true
   });
-  conn.on('error', console.error.bind(console, 'connection error:'))
-  conn.on('disconnected', () => console.log('disconnected from ggc!'));
-  conn.on('open', () => {
-    console.log('ggc connected!');
-    cb && cb();
-    // console.log(Article.find({}).exec(arr => console.log(arr)))
-  });
-};
-module.exports.connInstance = conn;
-  // saveArticles,
-  // getArticles
-// };
+  if (!connInstance) {
+    console.error.bind(console, 'connection error:')
+  }
+  console.log('database connected: ' + dbUrl);
+
+  const mongo = mongoose.connection
+
+  // mongo.on('error', error => { debug('mongo: ' + error.name) })
+  // mongo.on('connected', () => { debug('mongo: Connected') })
+  mongoose.connection.on('disconnected', () => { console.log('database Disconnected') })
+  return connInstance;
+}

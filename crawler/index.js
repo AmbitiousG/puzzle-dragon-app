@@ -21,7 +21,7 @@ module.exports.fetchMonsters = async (ids) => {
     logFetchEnd(monster.id, monster.name, monster.name_cn);
     monsterArr.push(monster.plainData);
     if(id == ids[ids.length - 1] || monsterArr.length == SAVE_AMOUNT) {
-      await saveMonsters(monsterArr);
+      console.log(await saveMonsters(monsterArr));
       monsterArr = [];
     }
     timeout(random());
