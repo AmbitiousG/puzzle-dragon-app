@@ -54,7 +54,7 @@ const monsterLeaderSkillSchema = new mongoose.Schema({
 
 const monsterAwokenSkillSchema = new mongoose.Schema({
   skill_id: {
-    type:Number,
+    type: Number,
     unique: true,
     index: true
   },
@@ -83,9 +83,9 @@ const monsterSchema = new mongoose.Schema({
   monster_image_base64: String,
   name: String,
   name_cn: String,
-  monster_attr: {type: objectIdType, ref: "MonsterAttr"},
-  monster_sub_attr: {type: objectIdType, ref: "MonsterAttr"},
-  series: {type: objectIdType, ref: "MonsterSeries"},
+  monster_attr: { type: objectIdType, ref: "MonsterAttr" },
+  monster_sub_attr: { type: objectIdType, ref: "MonsterAttr" },
+  series: { type: objectIdType, ref: "MonsterSeries" },
   rare: Number,
   cost: Number,
   growth: Number,
@@ -107,24 +107,24 @@ const monsterSchema = new mongoose.Schema({
   feed_exp: Number,
   feed_exp_str: String,
   feed_exp_max: Number,
-  active_skill: {type: objectIdType, ref: "ActiveSkill"},
-  leader_skill: {type: objectIdType, ref: "LeaderSkill"},
-  awoken_skills: [{type: objectIdType, ref: "AwokenSkill"}],
-  break_skills: [{type: objectIdType, ref: "AwokenSkill"}],
+  active_skill: { type: objectIdType, ref: "ActiveSkill" },
+  leader_skill: { type: objectIdType, ref: "LeaderSkill" },
+  awoken_skills: [{ type: objectIdType, ref: "AwokenSkill" }],
+  break_skills: [{ type: objectIdType, ref: "AwokenSkill" }],
   isAssistive: Boolean,
   fromEvolution: Boolean,
   fromShop: Boolean,
   fromFriendship: Boolean,
-  fromColabo:Boolean,
+  fromColabo: Boolean,
   colaboName: String,
   fromDungeon: Boolean,
-  dungeonList: [{type: objectIdType, ref: "Dungeon"}],
+  dungeonList: [{ type: objectIdType, ref: "Dungeon" }],
   monsterSwitchable: Boolean,
-  shinkaMonster: {type: objectIdType, ref: "Monster"},
-  megaShinkaMonster: [{type: objectIdType, ref: "Monster"}],
-  shinkaFrom: {type: objectIdType, ref: "Monster"},
-  shinkaMaterials: [{type: objectIdType, ref: "Monster"}],
-  shinkaAssist: {type: objectIdType, ref: "Monster"}
+  shinkaMonster: { type: objectIdType, ref: "Monster" },
+  megaShinkaMonster: [{ type: objectIdType, ref: "Monster" }],
+  shinkaFrom: { type: objectIdType, ref: "Monster" },
+  shinkaMaterials: [{ type: objectIdType, ref: "Monster" }],
+  shinkaAssist: { type: objectIdType, ref: "Monster" }
 });
 
 const MonsterType = mongoose.model("MonsterType", monsterTypeSchema);

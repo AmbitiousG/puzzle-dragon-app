@@ -58,21 +58,20 @@ const conn = mongoose.connection;
 //     }).sort({item_id: -1}).populate('label').limit(10).exec();
 // }
 
-module.exports = {
-    conn: function (cb, isReadonly = false) {
-        mongoose.connect(dbConfig.server + '/' + dbConfig.db, {
-            user: isReadonly ? dbConfig.readonly_user : dbConfig.user,
-            pass: isReadonly ? dbConfig.readonly_pwd : dbConfig.pwd,
-        });
-        conn.on('error', console.error.bind(console, 'connection error:'))
-        conn.on('disconnected', () => console.log('disconnected from ggc!'));
-        conn.on('open', () => {
-            console.log('ggc connected!');
-            cb && cb();
-            // console.log(Article.find({}).exec(arr => console.log(arr)))
-        });
-    },
-    connInstance: conn,
-    // saveArticles,
-    // getArticles
+module.exports.conn = function (cb, isReadonly = false) {
+  mongoose.connect(dbConfig.server + '/' + dbConfig.db, {
+    user: isReadonly ? dbConfig.readonly_user : dbConfig.user,
+    pass: isReadonly ? dbConfig.readonly_pwd : dbConfig.pwd,
+  });
+  conn.on('error', console.error.bind(console, 'connection error:'))
+  conn.on('disconnected', () => console.log('disconnected from ggc!'));
+  conn.on('open', () => {
+    console.log('ggc connected!');
+    cb && cb();
+    // console.log(Article.find({}).exec(arr => console.log(arr)))
+  });
 };
+module.exports.connInstance = conn;
+  // saveArticles,
+  // getArticles
+// };

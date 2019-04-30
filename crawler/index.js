@@ -7,10 +7,10 @@ const chalk = require('chalk');
 const log = console.log;
 
 // new Monster(PARSE_MONSTER_FROM_HTML, undefined, )
-const fetchMonster = async (id) => {
-    return await fetchMonsters([id]);
+module.exports.fetchMonster = async (id) => {
+  return await fetchMonsters([id]);
 }
-const fetchMonsters = async (ids) => {
+module.exports.fetchMonsters = async (ids) => {
   for (id of ids) {
     log(chalk.green(`fetch monster[id: ${id}]:`));
     const $ = await getMonsterDetail(id);
@@ -19,9 +19,4 @@ const fetchMonsters = async (ids) => {
     let monster = new Monster(id, PARSE_MONSTER_FROM_HTML, undefined, $);
     timeout(random());
   }
-}
-
-module.exports = {
-  fetchMonster,
-  fetchMonsters,
 }

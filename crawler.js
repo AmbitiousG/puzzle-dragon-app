@@ -1,5 +1,6 @@
 const request= require("request");
 const crawler = require('./crawler/index');
+const {getFetchingArray} = require('./crawler/utils');
 
 // function getImage() {
 //   request({
@@ -14,4 +15,4 @@ const crawler = require('./crawler/index');
 
 // getImage();
 
-crawler.fetchMonster(1);
+crawler.fetchMonsters(getFetchingArray());

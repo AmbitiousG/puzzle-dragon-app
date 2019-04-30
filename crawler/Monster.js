@@ -14,7 +14,7 @@ module.exports = class Monster {
   processCheerio($) {
     this.name = _.trim($('h3').text()).replace(/^No\.\d+ - /, '');
     this.name_cn = $('h2').text();
-    // console.log(this.name, this.name_cn);
+    console.log(this.name, this.name_cn);
   }
 
   // get name() {
