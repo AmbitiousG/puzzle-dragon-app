@@ -127,20 +127,20 @@ const monsterSchema = new mongoose.Schema({
   shinkaAssist: { type: objectIdType, ref: "Monster" }
 });
 
-const MonsterType = mongoose.model("MonsterType", monsterTypeSchema);
-const MonsterAttr = mongoose.model("MonsterAttr", monsterAttrSchema);
-const MonsterSeries = mongoose.model("MonsterSeries", monsterSeriesSchema);
-const ActiveSkill = mongoose.model("ActiveSkill", monsterActiveSkillSchema);
-const LeaderSkill = mongoose.model("LeaderSkill", monsterLeaderSkillSchema);
-const AwokenSkill = mongoose.model("LeaderSkill", monsterAwokenSkillSchema);
-const Dungeon = mongoose.model("Dungeon", dungeonSchema);
-const Monster = mongoose.model("Monster", monsterSchema);
+module.exports.MonsterType = mongoose.model("MonsterType", monsterTypeSchema);
+module.exports.MonsterAttr = mongoose.model("MonsterAttr", monsterAttrSchema);
+module.exports.MonsterSeries = mongoose.model("MonsterSeries", monsterSeriesSchema);
+module.exports.ActiveSkill = mongoose.model("ActiveSkill", monsterActiveSkillSchema);
+module.exports.LeaderSkill = mongoose.model("LeaderSkill", monsterLeaderSkillSchema);
+module.exports.AwokenSkill = mongoose.model("AwokenSkill", monsterAwokenSkillSchema);
+module.exports.Dungeon = mongoose.model("Dungeon", dungeonSchema);
+module.exports.Monster = mongoose.model("Monster", monsterSchema);
 
-module.exports.MonsterType = MonsterType;
-module.exports.MonsterAttr = MonsterAttr;
-module.exports.MonsterSeries = MonsterSeries;
-module.exports.ActiveSkill = ActiveSkill;
-module.exports.LeaderSkill = LeaderSkill;
-module.exports.AwokenSkill = AwokenSkill;
-module.exports.Dungeon = Dungeon;
-module.exports.Monster = Monster;
+// module.exports.MonsterType = MonsterType;
+// module.exports.MonsterAttr = MonsterAttr;
+// module.exports.MonsterSeries = MonsterSeries;
+// module.exports.ActiveSkill = ActiveSkill;
+// module.exports.LeaderSkill = LeaderSkill;
+// module.exports.AwokenSkill = AwokenSkill;
+// module.exports.Dungeon = Dungeon;
+// module.exports.Monster = Monster;

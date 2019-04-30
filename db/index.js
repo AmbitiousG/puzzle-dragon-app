@@ -6,6 +6,10 @@ const schemas = require('./schema');
 
 const conn = mongoose.connection;
 
+module.exports.saveMonsters = async monsters => {
+  await (() => {})();
+}
+
 // const saveArticles = async function (articles, category) {
 //     //save labels
 //     const arrLabels = _(articles).map('label').flatten().uniq().compact().value();

@@ -17,7 +17,11 @@ module.exports = class Monster {
     console.log(this.name, this.name_cn);
   }
 
-  // get name() {
-  //   return "aaa";
-  // }
+  get plainData() {
+    return {
+      id: this.id,
+      name: this.name,
+      name_cn: this.name_cn
+    };
+  }
 }
