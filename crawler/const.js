@@ -2,8 +2,8 @@
 
 module.exports.PARSE_MONSTER_FROM_DB = 1;
 module.exports.PARSE_MONSTER_FROM_HTML = 2;
-module.exports.REQUEST_INTERVAL_MAX = 3000;
-module.exports.REQUEST_INTERVAL_MIN = 1000;
+module.exports.REQUEST_INTERVAL_MAX = 300;
+module.exports.REQUEST_INTERVAL_MIN = 100;
 module.exports.FETCHING_START_ID = 1;
 module.exports.FETCHING_LENGTH = 2;
 

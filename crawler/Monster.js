@@ -20,8 +20,8 @@ module.exports = class Monster {
   get plainData() {
     return {
       id: this.id,
-      name: this.name + this.id,
-      name_cn: this.name_cn + this.id
+      name: this.name,// + this.id,
+      name_cn: this.name_cn,// + this.id
     };
   }
 }
