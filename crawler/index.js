@@ -2,8 +2,8 @@ const { PARSE_MONSTER_FROM_DB, PARSE_MONSTER_FROM_HTML, REQUEST_INTERVAL_MAX, RE
 const Monster = require('./Monster');
 const { getMonsterDetail } = require('./api');
 const { timeout, random } = require('./utils');
-const { logFetchStart, logFetchEnd } = require('../logger');
-const {saveMonsters} = require('../db/index');
+const { logFetchStart, logFetchEnd, logFetchError } = require('../logger');
+const { saveMonsters } = require('../db/index');
 
 // new Monster(PARSE_MONSTER_FROM_HTML, undefined, )
 module.exports.fetchMonster = async (id) => {
@@ -12,16 +12,21 @@ module.exports.fetchMonster = async (id) => {
 module.exports.fetchMonsters = async (ids) => {
   let monsterArr = [];
   for (id of ids) {
-    // log(chalk.green(`fetch monster[id: ${id}]:`));
-    logFetchStart(id);
-    const $ = await getMonsterDetail(id);
-    // log(chalk.green('fetch done'));
-    // log(chalk.blue('monster detail:'), $);
-    let monster = new Monster(id, PARSE_MONSTER_FROM_HTML, undefined, $);
-    logFetchEnd(monster.id, monster.name, monster.name_cn);
-    monsterArr.push(monster.plainData);
-    if(id == ids[ids.length - 1] || monsterArr.length == SAVE_AMOUNT) {
-      console.log(await saveMonsters(monsterArr));
+    try {
+      logFetchStart(id);
+      const $ = await getMonsterDetail(id);
+      let monster = new Monster(id, PARSE_MONSTER_FROM_HTML, undefined, $);
+      let monsterObj = await monster.getPlainData()
+      monsterArr.push(monsterObj);
+      logFetchEnd(monsterObj.monster_id, monsterObj.name, monsterObj.name_cn);
+    }
+    catch (e) {
+      console.log(e)
+      // logFetchError(id, e);
+    }
+    if (id == ids[ids.length - 1] || monsterArr.length == SAVE_AMOUNT) {
+      // console.log(await saveMonsters(monsterArr));
+      await saveMonsters(monsterArr);
       monsterArr = [];
     }
     timeout(random());

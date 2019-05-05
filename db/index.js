@@ -10,10 +10,9 @@ module.exports.saveMonsters = async monsters => {
   try {
     const bulkOp = schemas.Monster.collection.initializeOrderedBulkOp();
     for (const monster of monsters) {
-      console.log(monster);
       bulkOp.find({ monster_id: monster.monster_id }).upsert().updateOne(monster);
     }
-    await bulkOp.execute();
+    monsters.length > 0 && await bulkOp.execute();
     return true;
     // return await schemas.Monster.collection.insertMany(monsters, {
     //   ordered: false // 插入失败则跳过

@@ -1,4 +1,5 @@
 const { PARSE_MONSTER_FROM_DB, PARSE_MONSTER_FROM_HTML } = require('./const');
+const { getMonsterImage, getMonsterAttrId, getMonsterTypeId } = require('./api');
 const _ = require('lodash');
 
 module.exports = class Monster {
@@ -12,16 +13,93 @@ module.exports = class Monster {
   }
 
   processCheerio($) {
-    this.name = _.trim($('h3').text()).replace(/^No\.\d+ - /, '');
-    this.name_cn = $('h2').text();
+    this.processCharactorImage($);
+    this.processMainInfo($);
     // console.log(this.plainData);
   }
 
-  get plainData() {
-    return {
+  processMainInfo($) {
+    const mainTables = $('.previous_next').closest('table').parent().find('table');
+    const table = $(mainTables[1]);
+    const tds = table.find('> tbody > tr:nth-child(1) > td');
+    this.avatarUrl = $(tds[0]).find('img').attr('src');
+    for (const node of $(tds[0]).find('td')[1].childNodes) {
+      let val = _.trim($(node).text());
+      if (node.nodeType == 3) {//Node.TEXT_NODE
+        if (val !== '') {
+          this.rare = val.length;
+        }
+      }
+      else if (node.tagName.toUpperCase() == 'H3') {
+        this.name = val.replace(/^No\.\d+ - /, '');
+      }
+      else if (node.tagName.toUpperCase() == 'H2') {
+        this.name_cn = val;
+      }
+    }
+    //process attr
+    let aTags = $(tds[1]).find('.tooltip');
+    if (aTags.length > 0) {
+      this.monster_attr = {
+        name: $(aTags[0]).attr('title').replace('主屬性:', ''),
+        url: $(aTags[0]).find('img').attr('src')
+      };
+      if (aTags.length > 1) {
+        this.monster_sub_attr = {
+          name: $(aTags[1]).attr('title').replace('副屬性:', ''),
+          url: $(aTags[1]).find('img').attr('src')
+        }
+      }
+    }
+    //process type
+    this.monster_types = [];
+    $(tds[2]).find('.tooltip').each((index, aTag) => {
+      this.monster_types.push({
+        name: $(aTag).attr('title'),
+        url: $(aTag).find('img').attr('src')
+      });
+    });
+
+    //
+    let td = table.find('> tbody > tr:nth-child(2) > td');
+    const matched = _.trim(td.text()).match(/成長類型: (\d+)萬　COST: (\d+)/);
+    this.growth = +matched[1];
+    this.cost = +matched[2];
+
+    td = table.find('> tbody > tr:nth-child(3) > td');
+    this.maxExp = +_.trim(td.text().replace('滿等所需經驗值:', ''));
+  }
+
+  processCharactorImage($) {
+    const td = $('.previous_next').next();
+    this.charactorImageUrl = td.find('img').attr('src');
+    // this.awoken_skills = [];
+    // td.find('.kakusei').each((index, div) => {
+    //   this.awoken_skills.push({
+
+    //   })
+    // });
+  }
+
+  async getPlainData() {
+    //process urls => base64
+    let monsterObj = {
       monster_id: this.monster_id,
       name: this.name,// + this.id,
       name_cn: this.name_cn,// + this.id
-    };
+      ...await getMonsterImage({
+        monster_id: this.monster_id,
+        avatarUrl: this.avatarUrl,
+        charactorImageUrl: this.charactorImageUrl
+      }),
+      monster_attr: await getMonsterAttrId(this.monster_attr),
+      monster_sub_attr: this.monster_sub_attr && await getMonsterAttrId(this.monster_sub_attr),
+      monster_types: await Promise.all(_.map(this.monster_types, async type => await getMonsterTypeId(type))),
+      growth: this.growth,
+      cost: this.cost,
+      maxExp: this.maxExp
+    }
+    console.log(monsterObj);
+    return monsterObj;
   }
 }

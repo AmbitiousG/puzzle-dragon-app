@@ -2,21 +2,13 @@ const mongoose = require('mongoose');
 const objectIdType = mongoose.Schema.Types.ObjectId;
 
 const monsterTypeSchema = new mongoose.Schema({
-  type_id: {
-    type: Number,
-    unique: true,
-    index: true
-  },
-  name: String
+  name: String,
+  type_image_base64: String
 });
 
 const monsterAttrSchema = new mongoose.Schema({
-  attr_id: {
-    type: Number,
-    unique: true,
-    index: true
-  },
-  name: String
+  name: String,
+  attr_image_base64: String
 });
 
 const monsterSeriesSchema = new mongoose.Schema({
