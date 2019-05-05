@@ -1,5 +1,5 @@
 const { PARSE_MONSTER_FROM_DB, PARSE_MONSTER_FROM_HTML } = require('./const');
-const { getMonsterImage, getMonsterAttrId, getMonsterTypeId } = require('./api');
+const { getMonsterImage, getMonsterAttrId, getMonsterTypeId, getMonsterAwokenSkillId } = require('./api');
 const _ = require('lodash');
 
 module.exports = class Monster {
@@ -14,12 +14,12 @@ module.exports = class Monster {
 
   processCheerio($) {
     this.processCharactorImage($);
-    this.processMainInfo($);
-    // console.log(this.plainData);
+    const mainTables = $('.previous_next').closest('table').parent().find('>table');
+    this.processMainInfo($, mainTables);
+    this.processAwokens($, mainTables);
   }
 
-  processMainInfo($) {
-    const mainTables = $('.previous_next').closest('table').parent().find('table');
+  processMainInfo($, mainTables) {
     const table = $(mainTables[1]);
     const tds = table.find('> tbody > tr:nth-child(1) > td');
     this.avatarUrl = $(tds[0]).find('img').attr('src');
@@ -70,6 +70,28 @@ module.exports = class Monster {
     this.maxExp = +_.trim(td.text().replace('滿等所需經驗值:', ''));
   }
 
+  processAwokens($, mainTables) {
+    const table = $(mainTables[6]);
+    const rows = table.find('>tbody > tr')
+    this.awokenSkills = [];
+    this.breakSkills = [];
+    rows.each((index, row) => {
+      const key = index == 0 ? 'awokenSkills' : 'breakSkills';
+      const aTags = $(row).find('.tooltip');
+      aTags.each((index, aTag) => {
+        const title = $(aTag).attr('title');
+        const matched = title.replace(/\n/g, '').match(/^【(.*?)】(.*?)$/);
+        this[key].push({
+          skill_name: matched[1],
+          skill_description: matched[2],
+          url: $(aTag).find('img').attr('src')
+        });
+      });
+    });
+    // console.log(this.awokenSkills)
+    // console.log(this.breakSkills)
+  }
+
   processCharactorImage($) {
     const td = $('.previous_next').next();
     this.charactorImageUrl = td.find('img').attr('src');
@@ -95,11 +117,13 @@ module.exports = class Monster {
       monster_attr: await getMonsterAttrId(this.monster_attr),
       monster_sub_attr: this.monster_sub_attr && await getMonsterAttrId(this.monster_sub_attr),
       monster_types: await Promise.all(_.map(this.monster_types, async type => await getMonsterTypeId(type))),
+      awoken_skills: await Promise.all(_.map(this.awokenSkills, async skill => await getMonsterAwokenSkillId(skill))),
+      break_skills: await Promise.all(_.map(this.breakSkills, async skill => await getMonsterAwokenSkillId(skill))),
       growth: this.growth,
       cost: this.cost,
       maxExp: this.maxExp
     }
-    console.log(monsterObj);
+    // console.log(monsterObj);
     return monsterObj;
   }
 }

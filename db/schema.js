@@ -45,11 +45,6 @@ const monsterLeaderSkillSchema = new mongoose.Schema({
 });
 
 const monsterAwokenSkillSchema = new mongoose.Schema({
-  skill_id: {
-    type: Number,
-    unique: true,
-    index: true
-  },
   skill_image_base64: String,
   skill_name: String,
   skill_description: String,
