@@ -6,7 +6,7 @@ const { proxy } = require('../db-config');
 const { Monster, MonsterAttr, MonsterType, AwokenSkill } = require('../db/schema');
 
 module.exports.getMonsterDetail = async id => {
-  let url = generateUrl(id);
+  const url = generateUrl(id);
 
   return new Promise((resolve, reject) => {
     request({
@@ -64,16 +64,16 @@ module.exports.getMonsterImage = async ({ monster_id, avatarUrl, charactorImageU
 
 module.exports.getMonsterAttrId = async ({ name, url }) => {
   try {
-    let attr = await MonsterAttr.findOne({ name });
+    const attr = await MonsterAttr.findOne({ name });
     if (attr) {
       return attr._id;
     }
     else {
-      attr = await MonsterAttr.collection.insertOne({
+      const result = await MonsterAttr.collection.insertOne({
         name,
         attr_image_base64: await getImageBase64(url)
       });
-      return attr._id;
+      return result.insertedId;
     }
   }
   catch (e) {
@@ -83,16 +83,16 @@ module.exports.getMonsterAttrId = async ({ name, url }) => {
 
 module.exports.getMonsterTypeId = async ({ name, url }) => {
   try {
-    let attr = await MonsterType.findOne({ name });
+    const attr = await MonsterType.findOne({ name });
     if (attr) {
       return attr._id;
     }
     else {
-      attr = await MonsterType.collection.insertOne({
+      const result = await MonsterType.collection.insertOne({
         name,
         type_image_base64: await getImageBase64(url)
       });
-      return attr._id;
+      return result.insertedId;
     }
   }
   catch (e) {
@@ -102,17 +102,17 @@ module.exports.getMonsterTypeId = async ({ name, url }) => {
 
 module.exports.getMonsterAwokenSkillId = async ({ skill_name, skill_description, url }) => {
   try {
-    let skill = await AwokenSkill.findOne({ skill_name });
+    const skill = await AwokenSkill.findOne({ skill_name });
     if (skill) {
       return skill._id;
     }
     else {
-      skill = await AwokenSkill.collection.insertOne({
+      const result = await AwokenSkill.collection.insertOne({
         skill_name,
         skill_description,
         skill_image_base64: await getImageBase64(url)
       });
-      return skill._id;
+      return result.insertedId;
     }
   }
   catch (e) {
