@@ -8,26 +8,16 @@ const schemas = require('./schema');
 
 module.exports.saveMonsters = async monsters => {
   try {
-    // const bulkOp = schemas.Monster.collection.initializeOrderedBulkOp();
-    // for (const monster of monsters) {
-    //   // console.log(monster);
-    //   bulkOp.find({id: monster.id}).upsert().updateOne(monster);
-    // }
-    // await bulkOp.execute();
-    let ops = [];
+    const bulkOp = schemas.Monster.collection.initializeOrderedBulkOp();
     for (const monster of monsters) {
-      ops.push({
-        updateOne: {
-          filter: { id: monster.id },
-          update: {
-            $set: _.omit(monster, 'id'),
-          },
-          upsert: true
-        }
-      })
+      console.log(monster);
+      bulkOp.find({ monster_id: monster.monster_id }).upsert().updateOne(monster);
     }
-    await schemas.Monster.collection.bulkWrite(ops);
+    await bulkOp.execute();
     return true;
+    // return await schemas.Monster.collection.insertMany(monsters, {
+    //   ordered: false // 插入失败则跳过
+    // })
   }
   catch (e) {
     console.log(e);

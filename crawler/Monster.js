@@ -3,7 +3,7 @@ const _ = require('lodash');
 
 module.exports = class Monster {
   constructor(id, fromDBorHtml, dbModel, $) {//$: cheerio instance
-    this.id = id;
+    this.monster_id = id;
     if (fromDBorHtml == PARSE_MONSTER_FROM_HTML) {//from html
       // console.log($)
       this.$ = $;
@@ -19,7 +19,7 @@ module.exports = class Monster {
 
   get plainData() {
     return {
-      id: this.id,
+      monster_id: this.monster_id,
       name: this.name,// + this.id,
       name_cn: this.name_cn,// + this.id
     };
