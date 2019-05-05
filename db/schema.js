@@ -21,11 +21,6 @@ const monsterSeriesSchema = new mongoose.Schema({
 });
 
 const monsterActiveSkillSchema = new mongoose.Schema({
-  active_skill_id: {
-    type: Number,
-    unique: true,
-    index: true
-  },
   skill_name: String,
   skill_description: String,
   skill_description_cn: String,
@@ -34,11 +29,6 @@ const monsterActiveSkillSchema = new mongoose.Schema({
 });
 
 const monsterLeaderSkillSchema = new mongoose.Schema({
-  leader_skill_id: {
-    type: Number,
-    unique: true,
-    index: true
-  },
   skill_name: String,
   skill_description: String,
   skill_description_cn: String
