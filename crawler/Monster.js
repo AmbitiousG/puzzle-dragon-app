@@ -19,7 +19,16 @@ module.exports = class Monster {
     this.processAwokens($, mainTables);
   }
 
-  processMainInfo($, mainTables) {
+  processMainInfo($, mainTables) {//avatarUrl
+    // rare
+    // name
+    // name_cn
+    // monster_attr
+    // monster_sub_attr
+    // monster_types
+    // growth
+    // cost
+    // maxExp
     const table = $(mainTables[1]);
     const tds = table.find('> tbody > tr:nth-child(1) > td');
     this.avatarUrl = $(tds[0]).find('img').attr('src');

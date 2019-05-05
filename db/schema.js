@@ -95,7 +95,7 @@ const monsterSchema = new mongoose.Schema({
   fromColabo: Boolean,
   colaboName: String,
   fromDungeon: Boolean,
-  dungeonList: [{ type: objectIdType, ref: "Dungeon" }],
+  fromDungeonList: [{ type: objectIdType, ref: "Dungeon" }],
   monsterSwitchable: Boolean,
   shinkaMonster: { type: objectIdType, ref: "Monster" },
   megaShinkaMonster: [{ type: objectIdType, ref: "Monster" }],
@@ -112,12 +112,3 @@ module.exports.LeaderSkill = mongoose.model("LeaderSkill", monsterLeaderSkillSch
 module.exports.AwokenSkill = mongoose.model("AwokenSkill", monsterAwokenSkillSchema);
 module.exports.Dungeon = mongoose.model("Dungeon", dungeonSchema);
 module.exports.Monster = mongoose.model("Monster", monsterSchema);
-
-// module.exports.MonsterType = MonsterType;
-// module.exports.MonsterAttr = MonsterAttr;
-// module.exports.MonsterSeries = MonsterSeries;
-// module.exports.ActiveSkill = ActiveSkill;
-// module.exports.LeaderSkill = LeaderSkill;
-// module.exports.AwokenSkill = AwokenSkill;
-// module.exports.Dungeon = Dungeon;
-// module.exports.Monster = Monster;
