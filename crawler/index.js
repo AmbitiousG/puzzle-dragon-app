@@ -1,9 +1,10 @@
 const { PARSE_MONSTER_FROM_DB, PARSE_MONSTER_FROM_HTML, REQUEST_INTERVAL_MAX, REQUEST_INTERVAL_MIN, SAVE_AMOUNT } = require('./const');
 const Monster = require('./Monster');
-const { getMonsterDetail } = require('./api');
+const { getMonsterDetail, getAwokenSkills, getImageBase64, checkAwokenImage } = require('./api');
 const { timeout, random } = require('./utils');
 const { logFetchStart, logFetchEnd, logFetchError } = require('../logger');
-const { saveMonsters } = require('../db/index');
+const { saveMonsters, saveAwokenSkills } = require('../db/index');
+const _ = require('lodash');
 
 // new Monster(PARSE_MONSTER_FROM_HTML, undefined, )
 module.exports.fetchMonster = async (id) => {
@@ -30,5 +31,26 @@ module.exports.fetchMonsters = async (ids) => {
       monsterArr = [];
     }
     timeout(random());
+  }
+}
+
+module.exports.fetchAwokens = async (isJP) => {
+  const imageDone = await checkAwokenImage();
+  try {
+    let skills = await getAwokenSkills(isJP);
+    if(imageDone) {
+      skills = _.map(skill => _.omit(skill, 'url'));
+    }
+    else {
+      skills = Promise.all(_.map(async skill => ({
+        ..._.omit(skill, 'url'),
+        skill_image_base64: await getImageBase64(skill.url)
+      })));
+    }
+    await saveAwokenSkills(skills);
+  }
+  catch (e) {
+    console.log(e)
+    // logFetchError(id, e);
   }
 }

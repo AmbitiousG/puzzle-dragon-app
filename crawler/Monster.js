@@ -30,9 +30,9 @@ module.exports = class Monster {
       monster_attr: await getMonsterAttrId(plainObj.monster_attr),
       monster_sub_attr: plainObj.monster_sub_attr && await getMonsterAttrId(plainObj.monster_sub_attr),
       monster_types: await Promise.all(_.map(plainObj.monster_types, async type => await getMonsterTypeId(type))),
-      awoken_skills: await Promise.all(_.map(plainObj.awokenSkills, async skill => await getMonsterAwokenSkillId(skill))),
-      break_skills: await Promise.all(_.map(plainObj.breakSkills, async skill => await getMonsterAwokenSkillId(skill))),
-      active_skill: await getMonsterActiveSkillId(plainObj.activeSkill),
+      awoken_skills: await Promise.all(_.map(plainObj.awoken_skills, async skill => await getMonsterAwokenSkillId(skill))),
+      break_skills: await Promise.all(_.map(plainObj.break_skills, async skill => await getMonsterAwokenSkillId(skill))),
+      active_skill: await getMonsterActiveSkillId(plainObj.active_skill),
       active_skill_same_monsters: await Promise.all(_.map(plainObj.active_skill_same_monsters, async id => await getMonsterId(id))),
     }
     // console.log(monsterObj);

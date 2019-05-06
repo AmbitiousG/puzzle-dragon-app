@@ -1,13 +1,14 @@
 const request = require("request");
-const crawler = require('./crawler/index');
+const {fetchMonsters, fetchAwokens} = require('./crawler/index');
 const { getFetchingArray } = require('./crawler/utils');
 const { connDB } = require('./db/index');
-const { Monster } = require('./db/schema');
+const { Monster, AwokenSkill } = require('./db/schema');
 const _ = require('lodash');
 
 const startFetch = async () => {
   await connDB();
-  crawler.fetchMonsters(getFetchingArray());
+  // fetchMonsters(getFetchingArray());
+  await fetchAwokens();
   // const monsters = await Monster
   //   .find({})
   //   .populate('awoken_skills', 'skill_name -_id')
