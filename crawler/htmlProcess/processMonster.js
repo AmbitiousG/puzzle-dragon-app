@@ -133,12 +133,12 @@ const processAwokens = ($, table) => {
   const rows = table.find('>tbody > tr')
   let awokenSkills = [];
   let breakSkills = [];
-  rows.each((index, row) => {
+  rows.each((i, row) => {
     const aTags = $(row).find('.tooltip');
-    aTags.each((index, aTag) => {
+    aTags.each((j, aTag) => {
       const title = $(aTag).attr('title');
       const matched = title.replace(/\n/g, '').match(/^【(.*?)】(.*?)$/);
-      (index == 0 ? awokenSkills : breakSkills).push({
+      (i == 0 ? awokenSkills : breakSkills).push({
         skill_name: matched[1],
         // skill_description: matched[2],
         // url: $(aTag).find('img').attr('src')

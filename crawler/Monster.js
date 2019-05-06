@@ -21,6 +21,7 @@ module.exports = class Monster {
     let plainObj = this.processCheerio();
     //process urls => base64
     let monsterObj = {
+      monster_id: this.monster_id,
       ...plainObj,
       ...await getMonsterImage({
         monster_id: plainObj.monster_id,
