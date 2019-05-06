@@ -3,7 +3,7 @@ const _ = require('lodash');
 const processAwokensCN = $ => {
   const table = $('h2').next().find('> table');
   let skills = [];
-  table.find('>tbody >tr').eq(11).each((index, row) => {
+  table.find('>tbody >tr').each((index, row) => {
     let skill = {};
     const cells = $(row).find('td');
     skill.url = cells.eq(0).find('img').attr('src');
