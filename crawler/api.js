@@ -50,11 +50,11 @@ module.exports.getMonsterImage = async ({ monster_id, avatarUrl, charactorImageU
     if (!monster || !monster.monster_avatar_base64) {
       return {
         monster_avatar_base64: await getImageBase64(avatarUrl),
-        monster_image_base64: await getImageBase64(charactorImageUrl)
+        monster_image_url: charactorImageUrl
       };
     }
     else {
-      return _.pick(monster, ['monster_avatar_base64', 'monster_image_base64']);
+      return _.pick(monster, ['monster_avatar_base64', 'monster_image_url']);
     }
   }
   catch (e) {

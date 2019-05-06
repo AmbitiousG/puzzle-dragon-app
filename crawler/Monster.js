@@ -15,11 +15,12 @@ module.exports = class Monster {
   processCheerio($) {
     this.processCharactorImage($);
     const mainTables = $('.previous_next').closest('table').parent().find('>table');
-    this.processMainInfo($, mainTables);
-    this.processAwokens($, mainTables);
+    this.processMainInfo($, $(mainTables[1]));
+    this.processMonsterStatus($, $(mainTables[2]));
+    this.processAwokens($, $(mainTables[6]));
   }
 
-  processMainInfo($, mainTables) {//avatarUrl
+  processMainInfo($, table) {//avatarUrl
     // rare
     // name
     // name_cn
@@ -29,7 +30,6 @@ module.exports = class Monster {
     // growth
     // cost
     // maxExp
-    const table = $(mainTables[1]);
     const tds = table.find('> tbody > tr:nth-child(1) > td');
     this.avatarUrl = $(tds[0]).find('img').attr('src');
     for (const node of $(tds[0]).find('td')[1].childNodes) {
@@ -79,8 +79,34 @@ module.exports = class Monster {
     this.maxExp = +_.trim(td.text().replace('滿等所需經驗值:', ''));
   }
 
-  processAwokens($, mainTables) {
-    const table = $(mainTables[6]);
+  processMonsterStatus($, table) {//hp, atk...
+    const rows = table.find('>tbody>tr');
+    //row0
+    let cells = $(rows[0]).find('table td');
+    this.hp_lv1 = +_.trim($(cells[1]).text().replace(/hp:/i, ''));
+    this.atk_lv1 = +_.trim($(cells[2]).text().replace(/攻擊力:/i, ''));
+    this.rcv_lv1 = +_.trim($(cells[3]).text().replace(/回復力:/i, ''));
+
+    //row1
+    cells = $(rows[1]).find('table td');
+    this.maxLv = +_.trim($(cells[0]).text().replace(/lv\./i, ''));
+    this.hp_max = +_.trim($(cells[1]).text().replace(/hp:/i, ''));
+    this.atk_max = +_.trim($(cells[2]).text().replace(/攻擊力:/i, ''));
+    this.rcv_max = +_.trim($(cells[3]).text().replace(/回復力:/i, ''));
+
+    if (rows.length > 3) {
+      const row = $(rows[rows.length - 2]);
+      if(row.find('td').eq(0).text().indexOf('等級界限突破') != -1) {
+
+        cells = row.find('table td');
+        this.hp_break = +_.trim($(cells[1]).text().replace(/hp:/i, ''));
+        this.atk_break = +_.trim($(cells[2]).text().replace(/攻擊力:/i, ''));
+        this.rcv_break = +_.trim($(cells[3]).text().replace(/回復力:/i, ''));
+      }
+    }
+  }
+
+  processAwokens($, table) {
     const rows = table.find('>tbody > tr')
     this.awokenSkills = [];
     this.breakSkills = [];
@@ -130,7 +156,17 @@ module.exports = class Monster {
       break_skills: await Promise.all(_.map(this.breakSkills, async skill => await getMonsterAwokenSkillId(skill))),
       growth: this.growth,
       cost: this.cost,
-      maxExp: this.maxExp
+      maxExp: this.maxExp,
+      maxLv: this.maxLv,
+      hp_lv1: this.hp_lv1,
+      atk_lv1: this.atk_lv1,
+      rcv_lv1: this.rcv_lv1,
+      hp_max: this.hp_max,
+      atk_max: this.atk_max,
+      rcv_max: this.rcv_max,
+      hp_break: this.hp_break,
+      atk_break: this.atk_break,
+      rcv_break: this.rcv_break,
     }
     // console.log(monsterObj);
     return monsterObj;
