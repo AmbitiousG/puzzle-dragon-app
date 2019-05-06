@@ -38,6 +38,7 @@ const monsterAwokenSkillSchema = new mongoose.Schema({
   skill_image_base64: String,
   skill_name: String,
   skill_description: String,
+  skill_description_cn: String,
 });
 
 const dungeonSchema = new mongoose.Schema({
@@ -85,6 +86,7 @@ const monsterSchema = new mongoose.Schema({
   feed_exp_str: String,
   feed_exp_max: Number,
   active_skill: { type: objectIdType, ref: "ActiveSkill" },
+  active_skill_same_monsters: [{ type: objectIdType, ref: "Monster" }],
   leader_skill: { type: objectIdType, ref: "LeaderSkill" },
   awoken_skills: [{ type: objectIdType, ref: "AwokenSkill" }],
   break_skills: [{ type: objectIdType, ref: "AwokenSkill" }],

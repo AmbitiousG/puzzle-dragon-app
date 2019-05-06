@@ -23,3 +23,4 @@ const startFetch = async () => {
 }
 
 startFetch();
+// crawler.fetchMonsters(getFetchingArray());

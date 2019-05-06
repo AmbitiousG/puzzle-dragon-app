@@ -3,7 +3,8 @@ const request = require('request');
 const cheerio = require('cheerio');
 const { generateUrl } = require('./utils');
 const { proxy } = require('../db-config');
-const { Monster, MonsterAttr, MonsterType, AwokenSkill } = require('../db/schema');
+const { Monster, MonsterAttr, MonsterType, AwokenSkill, ActiveSkill } = require('../db/schema');
+const {AWOKEN_SKILL_PAGE_URL, AWOKEN_SKILL_PAGE_JP_URL} = require('./const');
 
 module.exports.getMonsterDetail = async id => {
   const url = generateUrl(id);
@@ -23,6 +24,25 @@ module.exports.getMonsterDetail = async id => {
     })
   })
 }
+
+// module.exports.getAwokenSkills = async () => {
+//   const url = generateUrl(id);
+
+//   return new Promise((resolve, reject) => {
+//     request({
+//       uri: ,
+//       jar: true, //hold cookie
+//       proxy
+//     }, (error, response, body) => {
+//       if (!error && response.statusCode == 200) {
+//         resolve(cheerio.load(body));
+//       }
+//       else {
+//         reject();
+//       }
+//     })
+//   })
+// }
 
 const getImageBase64 = module.exports.getImageBase64 = url => {
   if (url.indexOf('http') == -1) {
@@ -109,8 +129,47 @@ module.exports.getMonsterAwokenSkillId = async ({ skill_name, skill_description,
     else {
       const result = await AwokenSkill.collection.insertOne({
         skill_name,
-        skill_description,
+        skill_description_cn: skill_description,
         skill_image_base64: await getImageBase64(url)
+      });
+      return result.insertedId;
+    }
+  }
+  catch (e) {
+    console.log(e);
+  }
+}
+
+module.exports.getMonsterActiveSkillId = async ({ skill_name, skill_description_cn, skill_init_turn, skill_max_turn }) => {
+  try {
+    const skill = await ActiveSkill.findOne({ skill_name });
+    if (skill) {
+      return skill._id;
+    }
+    else {
+      const result = await ActiveSkill.collection.insertOne({
+        skill_name,
+        skill_description_cn,
+        skill_init_turn,
+        skill_max_turn
+      });
+      return result.insertedId;
+    }
+  }
+  catch (e) {
+    console.log(e);
+  }
+}
+
+module.exports.getMonsterId = async (id) => {
+  try {
+    const monster = await Monster.findOne({ monster_id: id });
+    if (monster) {
+      return monster._id;
+    }
+    else {
+      const result = await Monster.collection.insertOne({
+        monster_id: id
       });
       return result.insertedId;
     }
