@@ -30,7 +30,46 @@ const processAwokensCN = $ => {
   return skills;
 }
 const processAwokensJP = $ => {
-  return [];
+  const table = $('table').eq(1);
+  let skills = [];
+  let note = '';
+  let arrNote = [];
+  table.find('>tbody > tr').each((index, row) => {
+    if(index > 0) {//ignore head row
+      let skill = {};
+      const cells = $(row).find('td');
+      if(cells.length == 5) {
+        note = '';
+        let nodes = cells.eq(4).get(0).childNodes;
+        for (const node of nodes) {
+          if(node.type == 'text') {
+            if(_.trim(node.nodeValue) != '') {
+              arrNote.push(_.trim(node.nodeValue));
+            }
+          }
+          else if(node.type == 'tag') {
+            if(node.name == 'br') {
+              arrNote.push('<br>');
+            }
+            else if(node.name == 'strong') {
+              arrNote.push(`<strong>${_.trim($(node).text())}</strong>`);
+            }
+            else {
+              arrNote.push(_.trim($(node).text()));
+            }
+          }
+        }
+        note = arrNote.join('');
+      }
+      skill.url = cells.eq(0).find('img.atwiki_plugin_image').data('original');
+      skill.skill_name = _.trim(cells.eq(1).text());
+      skill.skill_name = skill.skill_name.replace('+', '＋');
+      skill.skill_description = _.trim(cells.eq(2).text());
+      skill.note = note;
+      skills.push(skill);
+    }
+  });
+  return skills;
 }
 
 module.exports.processAwokens = ($, isJP) => {

@@ -39,6 +39,7 @@ const monsterAwokenSkillSchema = new mongoose.Schema({
   skill_name: String,
   skill_description: String,
   skill_description_cn: String,
+  note: String
 });
 
 const dungeonSchema = new mongoose.Schema({

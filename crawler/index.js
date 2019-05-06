@@ -34,12 +34,12 @@ module.exports.fetchMonsters = async (ids) => {
   }
 }
 
-module.exports.fetchAwokens = async (isJP) => {
+module.exports.fetchAwokens = async (isJP = false) => {
   const imageDone = await checkAwokenImage();
   try {
     let skills = await getAwokenSkills(isJP);
     if(imageDone) {
-      skills = _.map(skill => _.omit(skill, 'url'));
+      skills = _.map(skills, skill => _.omit(skill, 'url'));
     }
     else {
       skills = await Promise.all(_.map(skills, async skill => ({

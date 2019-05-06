@@ -8,7 +8,7 @@ const _ = require('lodash');
 const startFetch = async () => {
   await connDB();
   // fetchMonsters(getFetchingArray());
-  await fetchAwokens();
+  await fetchAwokens(true);
   // const monsters = await Monster
   //   .find({})
   //   .populate('awoken_skills', 'skill_name -_id')

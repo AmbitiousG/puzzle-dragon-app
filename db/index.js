@@ -32,6 +32,7 @@ module.exports.saveAwokenSkills = async skills => {
       bulkOp.find({ skill_name: skill.skill_name }).upsert().updateOne(skill);
 
     }
+    // bulkOp.find({ skill_name: skills[0].skill_name }).upsert().updateOne(skills[0]);
     skills.length > 0 && await bulkOp.execute();
     return true;
     // return await schemas.Monster.collection.insertMany(monsters, {
