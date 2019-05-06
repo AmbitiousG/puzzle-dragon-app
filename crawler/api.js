@@ -7,7 +7,7 @@ const { Monster, MonsterAttr, MonsterType, AwokenSkill, ActiveSkill } = require(
 const { AWOKEN_SKILL_PAGE_URL, AWOKEN_SKILL_PAGE_JP_URL } = require('./const');
 const { processAwokens } = require('./htmlProcess/processAwokens');
 
-module.exports.getMonsterDetail = async id => {
+module.exports.getMonsterDetail = id => {
   const url = generateUrl(id);
 
   return new Promise((resolve, reject) => {
@@ -26,7 +26,7 @@ module.exports.getMonsterDetail = async id => {
   })
 }
 
-module.exports.getAwokenSkills = async (isJP = false) => {
+module.exports.getAwokenSkills = (isJP = false) => {
   const url = isJP ? AWOKEN_SKILL_PAGE_JP_URL : AWOKEN_SKILL_PAGE_URL;
 
   return new Promise((resolve, reject) => {

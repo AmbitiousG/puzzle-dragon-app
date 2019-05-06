@@ -42,7 +42,7 @@ module.exports.fetchAwokens = async (isJP) => {
       skills = _.map(skill => _.omit(skill, 'url'));
     }
     else {
-      skills = Promise.all(_.map(async skill => ({
+      skills = await Promise.all(_.map(skills, async skill => ({
         ..._.omit(skill, 'url'),
         skill_image_base64: await getImageBase64(skill.url)
       })));
