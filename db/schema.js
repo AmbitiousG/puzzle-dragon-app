@@ -25,7 +25,8 @@ const monsterActiveSkillSchema = new mongoose.Schema({
   skill_description: String,
   skill_description_cn: String,
   skill_init_turn: Number,
-  skill_max_turn: Number
+  skill_max_turn: Number,
+  same_monsters: [{ type: objectIdType, ref: "Monster" }],
 });
 
 const monsterLeaderSkillSchema = new mongoose.Schema({

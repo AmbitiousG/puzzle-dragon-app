@@ -206,3 +206,19 @@ module.exports.getMonsterId = async (id) => {
     console.log(e);
   }
 }
+
+module.exports.getAndUpdateMonsterIds = async monsters => {
+  try {
+    await Monster.collection.insertMany(monsters, {
+      ordered: false
+    });
+  }
+  catch (e) {
+    console.log(e);
+  }
+  const allMonsters = await Monster.find({}, {monster_id: 1});
+  return _.reduce(monsters, (res, {monster_id}) => {
+    res[monster_id] = _.find(allMonsters, {monster_id})._id;
+    return res;
+  }, {});
+}

@@ -118,14 +118,14 @@ const processActiveSkill = ($, table) => {//active_skill...
   activeSkill.skill_description_cn = $(rows[1]).find('td').html();
 
   //row2
-  let aTags = $(rows[2]).find('.tooltip');
-  let active_skill_same_monsters = [];
-  aTags.each((index, aTag) => {
-    active_skill_same_monsters.push(+$(aTag).attr('href').replace('pets/', ''));
-  });
+  // let aTags = $(rows[2]).find('.tooltip');
+  // let active_skill_same_monsters = [];
+  // aTags.each((index, aTag) => {
+  //   active_skill_same_monsters.push(+$(aTag).attr('href').replace('pets/', ''));
+  // });
   return {
     active_skill: activeSkill,
-    active_skill_same_monsters
+    // active_skill_same_monsters
   };
 };
 
