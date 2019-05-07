@@ -9,7 +9,7 @@ const startFetch = async () => {
   await connDB();
   // fetchMonsters(getFetchingArray());
   // await fetchAwokens(true);
-  await fetchActiveSkills(true);
+  await fetchActiveSkills();
   // const monsters = await Monster
   //   .find({})
   //   .populate('awoken_skills', 'skill_name -_id')

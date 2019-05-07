@@ -38,7 +38,7 @@ module.exports.fetchAwokens = async (isJP = false) => {
   const imageDone = await checkAwokenImage();
   try {
     let skills = await getAwokenSkills(isJP);
-    if(imageDone) {
+    if (imageDone) {
       skills = _.map(skills, skill => _.omit(skill, 'url'));
     }
     else {
@@ -58,11 +58,14 @@ module.exports.fetchAwokens = async (isJP = false) => {
 module.exports.fetchActiveSkills = async (isJP = false) => {
   try {
     let skills = await getActiveSkills(isJP);
-    let monsterObj = await getAndUpdateMonsterIds(_(skills).map('same_monsters').flatten().uniqBy('monster_id').value());
-    skills = _.map(skills, skill => ({
-      ...skill,
-      same_monsters: _.map(skill.same_monsters, monster => monsterObj[monster.monster_id])
-    }));
+    let sameMonsters = _(skills).map('same_monsters').compact().flatten().uniqBy('monster_id').value();
+    if (sameMonsters.length > 0) {
+      let monsterObj = await getAndUpdateMonsterIds(sameMonsters);
+      skills = _.map(skills, skill => ({
+        ...skill,
+        same_monsters: _.map(skill.same_monsters, monster => monsterObj[monster.monster_id])
+      }));
+    }
     await saveActiveSkills(skills);
   }
   catch (e) {

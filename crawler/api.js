@@ -207,7 +207,7 @@ module.exports.getMonsterId = async (id) => {
   }
 }
 
-module.exports.getAndUpdateMonsterIds = async monsters => {
+module.exports.getAndUpdateMonsterIds = async (monsters = []) => {
   try {
     await Monster.collection.insertMany(monsters, {
       ordered: false
