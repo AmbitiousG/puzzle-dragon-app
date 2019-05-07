@@ -4,8 +4,9 @@ const cheerio = require('cheerio');
 const { generateUrl } = require('./utils');
 const { proxy } = require('../db-config');
 const { Monster, MonsterAttr, MonsterType, AwokenSkill, ActiveSkill } = require('../db/schema');
-const { AWOKEN_SKILL_PAGE_URL, AWOKEN_SKILL_PAGE_JP_URL } = require('./const');
+const { AWOKEN_SKILL_PAGE_URL, AWOKEN_SKILL_PAGE_JP_URL, ACTIVE_SKILL_PAGE_JP_URL, ACTIVE_SKILL_PAGE_URL } = require('./const');
 const { processAwokens } = require('./htmlProcess/processAwokens');
+const { processActiveSkills } = require('./htmlProcess/processActiveSkills');
 
 module.exports.getMonsterDetail = id => {
   const url = generateUrl(id);
@@ -38,6 +39,26 @@ module.exports.getAwokenSkills = (isJP = false) => {
       if (!error && response.statusCode == 200) {
         const $ = cheerio.load(body);
         resolve(processAwokens($, isJP));
+      }
+      else {
+        reject();
+      }
+    })
+  })
+}
+
+module.exports.getActiveSkills = (isJP = false) => {
+  const url = isJP ? ACTIVE_SKILL_PAGE_JP_URL : ACTIVE_SKILL_PAGE_URL;
+
+  return new Promise((resolve, reject) => {
+    request({
+      uri: url,
+      jar: true, //hold cookie
+      proxy
+    }, (error, response, body) => {
+      if (!error && response.statusCode == 200) {
+        const $ = cheerio.load(body);
+        resolve(processActiveSkills($, isJP));
       }
       else {
         reject();

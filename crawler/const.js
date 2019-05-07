@@ -11,3 +11,5 @@ module.exports.SAVE_AMOUNT = 50;
 
 module.exports.AWOKEN_SKILL_PAGE_URL = "http://pad.skyozora.com/skill/%E8%A6%BA%E9%86%92%E6%8A%80%E8%83%BD%E4%B8%80%E8%A6%BD/";
 module.exports.AWOKEN_SKILL_PAGE_JP_URL = "https://www18.atwiki.jp/pazdra/pages/3778.html";
+module.exports.ACTIVE_SKILL_PAGE_URL = "http://pad.skyozora.com/skill/%E4%B8%BB%E5%8B%95%E6%8A%80%E8%83%BD%E4%B8%80%E8%A6%BD/";
+module.exports.ACTIVE_SKILL_PAGE_JP_URL = "https://www18.atwiki.jp/pazdra/pages/1684.html";
