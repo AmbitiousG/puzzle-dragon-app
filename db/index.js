@@ -29,7 +29,9 @@ module.exports.saveAwokenSkills = async skills => {
   try {
     const bulkOp = schemas.AwokenSkill.collection.initializeOrderedBulkOp();
     for (const skill of skills) {
-      bulkOp.find({ skill_name: skill.skill_name }).upsert().updateOne(skill);
+      bulkOp.find({ skill_name: skill.skill_name }).upsert().updateOne({
+        $set: skill
+      });
 
     }
     // bulkOp.find({ skill_name: skills[0].skill_name }).upsert().updateOne(skills[0]);
