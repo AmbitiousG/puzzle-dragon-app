@@ -1,9 +1,9 @@
 const { PARSE_MONSTER_FROM_DB, PARSE_MONSTER_FROM_HTML, REQUEST_INTERVAL_MAX, REQUEST_INTERVAL_MIN, SAVE_AMOUNT } = require('./const');
 const Monster = require('./Monster');
-const { getMonsterDetail, getAwokenSkills, getImageBase64, checkAwokenImage, getActiveSkills, getAndUpdateMonsterIds } = require('./api');
+const { getMonsterDetail, getAwokenSkills, getImageBase64, checkAwokenImage, getActiveSkills, getAndUpdateMonsterIds, getLeaderSkills } = require('./api');
 const { timeout, random } = require('./utils');
 const { logFetchStart, logFetchEnd, logFetchError } = require('../logger');
-const { saveMonsters, saveAwokenSkills, saveActiveSkills } = require('../db/index');
+const { saveMonsters, saveAwokenSkills, saveActiveSkills, saveLeaderSkills } = require('../db/index');
 const _ = require('lodash');
 
 // new Monster(PARSE_MONSTER_FROM_HTML, undefined, )
@@ -67,6 +67,25 @@ module.exports.fetchActiveSkills = async (isJP = false) => {
       }));
     }
     await saveActiveSkills(skills);
+  }
+  catch (e) {
+    console.log(e)
+    // logFetchError(id, e);
+  }
+}
+
+module.exports.fetchLeaderSkills = async (isJP = false) => {
+  try {
+    let skills = await getLeaderSkills(isJP);
+    let sameMonsters = _(skills).map('same_monsters').compact().flatten().uniqBy('monster_id').value();
+    if (sameMonsters.length > 0) {
+      let monsterObj = await getAndUpdateMonsterIds(sameMonsters);
+      skills = _.map(skills, skill => ({
+        ...skill,
+        same_monsters: _.map(skill.same_monsters, monster => monsterObj[monster.monster_id])
+      }));
+    }
+    await saveLeaderSkills(skills);
   }
   catch (e) {
     console.log(e)

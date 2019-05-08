@@ -1,5 +1,5 @@
 const { PARSE_MONSTER_FROM_DB, PARSE_MONSTER_FROM_HTML } = require('./const');
-const { getMonsterImage, getMonsterAttrId, getMonsterTypeId, getMonsterAwokenSkillId, getMonsterActiveSkillId } = require('./api');
+const { getMonsterImage, getMonsterAttrId, getMonsterTypeId, getMonsterAwokenSkillId, getMonsterActiveSkillId, getMonsterLeaderSkillId } = require('./api');
 const { processMonster } = require('./htmlProcess/processMonster');
 const _ = require('lodash');
 
@@ -19,6 +19,7 @@ module.exports = class Monster {
 
   async getPlainData() {
     let plainObj = this.processCheerio();
+    let monsterInfo = _.pick(plainObj, 'monster_id', 'name')
     //process urls => base64
     let monsterObj = {
       ..._.omit(plainObj, ['avatarUrl', 'charactorImageUrl']),
@@ -28,7 +29,8 @@ module.exports = class Monster {
       monster_types: await Promise.all(_.map(plainObj.monster_types, async type => await getMonsterTypeId(type))),
       awoken_skills: await Promise.all(_.map(plainObj.awoken_skills, async skill => await getMonsterAwokenSkillId(skill))),
       break_skills: await Promise.all(_.map(plainObj.break_skills, async skill => await getMonsterAwokenSkillId(skill))),
-      active_skill: await getMonsterActiveSkillId({ monster_id: this.monster_id, name: plainObj.name }, plainObj.active_skill),
+      active_skill: await getMonsterActiveSkillId(monsterInfo, plainObj.active_skill),
+      leader_skill: await getMonsterLeaderSkillId(monsterInfo, plainObj.leader_skill)
       // active_skill_same_monsters: await Promise.all(_.map(plainObj.active_skill_same_monsters, async id => await getMonsterId(id))),
     }
     // console.log(monsterObj);

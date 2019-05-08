@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { DROP_TYPES } = require('../const');
+const { processCellContent } = require('./utils');
 
 const processMainInfo = ($, table) => {//avatarUrl
   // rare
@@ -53,12 +53,18 @@ const processMainInfo = ($, table) => {//avatarUrl
 
   //
   let td = table.find('> tbody > tr:nth-child(2) > td');
-  const matched = _.trim(td.text()).match(/成長類型: (\d+)萬　COST: (\d+)/);
-  info.growth = +matched[1];
-  info.cost = +matched[2];
+  let matched = _.trim(td.text()).match(/成長類型: (\d+)萬　COST: (\d+)/);
+  if(matched) {
+    info.growth = +matched[1];
+    info.cost = +matched[2];
+  }
+  else {
+    matched = _.trim(td.text()).match(/COST: (\d+)/);
+    info.cost = +matched[1];
+  }
 
   td = table.find('> tbody > tr:nth-child(3) > td');
-  info.maxExp = +_.trim(td.text().replace('滿等所需經驗值:', ''));
+  info.maxExp = +_.trim(td.text().replace('滿等所需經驗值:', '')) || 0;
 
   return info;
 };
@@ -116,30 +122,7 @@ const processActiveSkill = ($, table) => {//active_skill...
   activeSkill.skill_max_turn = +_.trim(cells.eq(4).text());
 
   //row1
-  let arrNodes = [];
-  for (const node of rows.eq(1).find('td').get(0).childNodes) {
-    if (node.type == 'text') {
-      arrNodes.push(_.trim(node.nodeValue));
-    }
-    else if (node.type == 'tag') {
-      if (node.name == 'br') {
-        arrNodes.push('\n');
-      }
-      else if (node.name == 'img') {
-        let src = $(node).attr('src');
-        let matched = src.match(/.*\/(.*?)\.png.*/);
-        if (matched && matched.length > 0) {
-          let imgName = matched[1].toLowerCase();
-          DROP_TYPES[imgName] && arrNodes.push(DROP_TYPES[imgName]);
-          if (src.indexOf('change.gif') != -1) {
-            arrNodes.push('=>');
-          }
-        }
-      }
-    }
-  }
-
-  activeSkill.skill_description_cn = arrNodes.join('');
+  activeSkill.skill_description_cn = processCellContent($, rows.eq(1).find('td').get(0));
 
   //row2
   // let aTags = $(rows[2]).find('.tooltip');
@@ -175,6 +158,17 @@ const processAwokens = ($, table) => {
   };
 };
 
+const processLeaderSkill = ($, table) => {//leader_skill
+  const rows = $(table).find('>tbody>tr');
+  let skill = {};
+  skill.skill_name = _.trim(rows.eq(0).find('td').eq(0).find('a').text());
+
+  skill.skill_description_cn = processCellContent($, rows.eq(1).find('td').get(0));
+  return {
+    leader_skill: skill
+  };
+};
+
 const processCharactorImage = ($) => {
   const td = $('.previous_next').next();
   return { charactorImageUrl: td.find('img').attr('src') };
@@ -190,5 +184,6 @@ module.exports.processMonster = (monster_id, $) => {
     ...processMonsterValue($, $(mainTables[3])),
     ...processActiveSkill($, $(mainTables[4])),
     ...processAwokens($, $(mainTables[6])),
+    ...processLeaderSkill($, $(mainTables[7])),
   }
 }

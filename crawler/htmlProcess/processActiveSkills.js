@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { DROP_TYPES } = require('../const');
+const { processCellContent } = require('./utils');
 
 const processActiveSkillsCN = $ => {
   let skills = [];
@@ -10,28 +10,7 @@ const processActiveSkillsCN = $ => {
         let arrNodes = [];
         const cells = $(row).find('>td');
         skill.skill_name = _.trim(cells.eq(0).text());
-        for (const node of cells.get(1).childNodes) {
-          if (node.type == 'text') {
-            arrNodes.push(_.trim(node.nodeValue));
-          }
-          else if (node.type == 'tag') {
-            if (node.name == 'br') {
-              arrNodes.push('\n');
-            }
-            else if (node.name == 'img') {
-              let src = $(node).attr('src');
-              let matched = src.match(/.*\/(.*?)\.png.*/);
-              if (matched && matched.length > 0) {
-                let imgName = matched[1].toLowerCase();
-                DROP_TYPES[imgName] && arrNodes.push(DROP_TYPES[imgName]);
-                if (src.indexOf('change.gif') != -1) {
-                  arrNodes.push('=>');
-                }
-              }
-            }
-          }
-        }
-        skill.skill_description_cn = arrNodes.join('');
+        skill.skill_description_cn = processCellContent($, cells.get(1));
         skills.push(skill);
       }
     });

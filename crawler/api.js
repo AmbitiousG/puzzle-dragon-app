@@ -3,10 +3,11 @@ const request = require('request');
 const cheerio = require('cheerio');
 const { generateUrl } = require('./utils');
 const { proxy } = require('../db-config');
-const { Monster, MonsterAttr, MonsterType, AwokenSkill, ActiveSkill } = require('../db/schema');
-const { AWOKEN_SKILL_PAGE_URL, AWOKEN_SKILL_PAGE_JP_URL, ACTIVE_SKILL_PAGE_JP_URL, ACTIVE_SKILL_PAGE_URL } = require('./const');
+const { Monster, MonsterAttr, MonsterType, AwokenSkill, ActiveSkill, LeaderSkill } = require('../db/schema');
+const { AWOKEN_SKILL_PAGE_URL, AWOKEN_SKILL_PAGE_JP_URL, ACTIVE_SKILL_PAGE_JP_URL, ACTIVE_SKILL_PAGE_URL, LEADER_SKILL_PAGE_JP_URL } = require('./const');
 const { processAwokens } = require('./htmlProcess/processAwokens');
 const { processActiveSkills } = require('./htmlProcess/processActiveSkills');
+const { processLeaderSkills } = require('./htmlProcess/processLeaderSkills');
 
 module.exports.getMonsterDetail = id => {
   const url = generateUrl(id);
@@ -59,6 +60,27 @@ module.exports.getActiveSkills = (isJP = false) => {
       if (!error && response.statusCode == 200) {
         const $ = cheerio.load(body);
         resolve(processActiveSkills($, isJP));
+      }
+      else {
+        reject();
+      }
+    })
+  })
+}
+
+module.exports.getLeaderSkills = (isJP = false) => {
+  isJP = true;
+  const url = LEADER_SKILL_PAGE_JP_URL;
+
+  return new Promise((resolve, reject) => {
+    request({
+      uri: url,
+      jar: true, //hold cookie
+      proxy
+    }, (error, response, body) => {
+      if (!error && response.statusCode == 200) {
+        const $ = cheerio.load(body);
+        resolve(processLeaderSkills($, isJP));
       }
       else {
         reject();
@@ -168,11 +190,11 @@ module.exports.getMonsterAwokenSkillId = async ({ skill_name, skill_description,
   }
 }
 
-module.exports.getMonsterActiveSkillId = async ({monster_id, name}, { skill_name, skill_description_cn, skill_init_turn, skill_max_turn }) => {
+module.exports.getMonsterActiveSkillId = async ({ monster_id, name }, { skill_name, skill_description_cn, skill_init_turn, skill_max_turn }) => {
   try {
     const skill = await ActiveSkill.findOne({ skill_name });
     if (skill) {
-      const monsterId = await getMonsterId({monster_id, name});
+      const monsterId = await getMonsterId({ monster_id, name });
       _.assign(skill, {
         skill_description_cn,
         skill_init_turn,
@@ -197,7 +219,32 @@ module.exports.getMonsterActiveSkillId = async ({monster_id, name}, { skill_name
   }
 }
 
-const getMonsterId = module.exports.getMonsterId = async ({monster_id, name}) => {
+module.exports.getMonsterLeaderSkillId = async ({ monster_id, name }, { skill_name, skill_description_cn }) => {
+  try {
+    const skill = await LeaderSkill.findOne({ skill_name });
+    if (skill) {
+      const monsterId = await getMonsterId({ monster_id, name });
+      _.assign(skill, {
+        skill_description_cn,
+        same_monsters: _.unionBy(skill.same_monsters || [], [monsterId], item => item.toString())
+      });
+      await skill.save();
+      return skill._id;
+    }
+    else {
+      const result = await LeaderSkill.collection.insertOne({
+        skill_name,
+        skill_description_cn
+      });
+      return result.insertedId;
+    }
+  }
+  catch (e) {
+    console.log(e);
+  }
+}
+
+const getMonsterId = module.exports.getMonsterId = async ({ monster_id, name }) => {
   try {
     const monster = await Monster.findOne({ monster_id });
     if (monster) {
@@ -225,9 +272,9 @@ module.exports.getAndUpdateMonsterIds = async (monsters = []) => {
   catch (e) {
     console.log(e);
   }
-  const allMonsters = await Monster.find({}, {monster_id: 1});
-  return _.reduce(monsters, (res, {monster_id}) => {
-    res[monster_id] = _.find(allMonsters, {monster_id})._id;
+  const allMonsters = await Monster.find({}, { monster_id: 1 });
+  return _.reduce(monsters, (res, { monster_id }) => {
+    res[monster_id] = _.find(allMonsters, { monster_id })._id;
     return res;
   }, {});
 }

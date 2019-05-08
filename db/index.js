@@ -2,8 +2,8 @@ const _ = require('lodash');
 const mongoose = require('mongoose');
 
 const dbConfig = require('../db-config.json');
-const {Monster, AwokenSkill, ActiveSkill} = require('./schema');
-const { getImageBase64 } = require('../crawler/api');
+const {Monster, AwokenSkill, ActiveSkill, LeaderSkill} = require('./schema');
+// const { getImageBase64 } = require('../crawler/api');
 
 // const conn = mongoose.connection;
 
@@ -50,6 +50,23 @@ module.exports.saveAwokenSkills = async skills => {
 module.exports.saveActiveSkills = async skills => {
   try {
     const bulkOp = ActiveSkill.collection.initializeOrderedBulkOp();
+    for (const skill of skills) {
+      bulkOp.find({ skill_name: skill.skill_name }).upsert().updateOne({
+        $set: skill
+      });
+    }
+    skills.length > 0 && await bulkOp.execute();
+    return true;
+  }
+  catch (e) {
+    console.log(e);
+    return false;
+  }
+}
+
+module.exports.saveLeaderSkills = async skills => {
+  try {
+    const bulkOp = LeaderSkill.collection.initializeOrderedBulkOp();
     for (const skill of skills) {
       bulkOp.find({ skill_name: skill.skill_name }).upsert().updateOne({
         $set: skill

@@ -32,7 +32,8 @@ const monsterActiveSkillSchema = new mongoose.Schema({
 const monsterLeaderSkillSchema = new mongoose.Schema({
   skill_name: String,
   skill_description: String,
-  skill_description_cn: String
+  skill_description_cn: String,
+  same_monsters: [{ type: objectIdType, ref: "Monster" }],
 });
 
 const monsterAwokenSkillSchema = new mongoose.Schema({
