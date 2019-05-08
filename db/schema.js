@@ -96,11 +96,13 @@ const monsterSchema = new mongoose.Schema({
   fromDungeon: Boolean,
   fromDungeonList: [{ type: objectIdType, ref: "Dungeon" }],
   switchable: Boolean,
-  shinkaMonster: { type: objectIdType, ref: "Monster" },
-  megaShinkaMonster: [{ type: objectIdType, ref: "Monster" }],
   shinkaFrom: { type: objectIdType, ref: "Monster" },
+  normalShinka: { type: objectIdType, ref: "Monster" },
   shinkaMaterials: [{ type: objectIdType, ref: "Monster" }],
-  shinkaAssist: { type: objectIdType, ref: "Monster" }
+  megaShinkaMonsters: [{ type: objectIdType, ref: "Monster" }],
+  assistShinka: { type: objectIdType, ref: "Monster" },
+  tenseiShinka: { type: objectIdType, ref: "Monster" },
+  dotShinka: { type: objectIdType, ref: "Monster" },
 });
 
 module.exports.MonsterType = mongoose.model("MonsterType", monsterTypeSchema);

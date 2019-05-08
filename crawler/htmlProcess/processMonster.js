@@ -225,32 +225,75 @@ const processExtraInfo = ($, table) => {
 };
 
 const processEvolution = ($, table, monster_id) => {
-  // const aTags = $(table).find('.EvoTarget');
   let curMonsterTag = $(table).find('.pic').parent();
-  let materials = [];
-  let shinkaMonster;
-  let megaShinkaMonster = [];
+  let megaShinkaMonsters = [];
+  let shinkaMaterials = [];
+  let normalShinka;
   let shinkaFrom;
-  let shinkaAssist;
-  if(curMonsterTag) {
-    curMonsterTag.nextAll('.tooltip').each((index, aTag) => {
+  let assistShinka;
+  let dotShinka;
+  let tenseiShinka;
+  function getMaterials(aTags) {
+    let materials = [];
+    aTags.each((index, aTag) => {
       const arr = $(aTag).attr('title').split('-');
       materials.push({
         monster_id: +_.trim(arr[0]),
-        name: _.trim(arr[1])
+        name_cn: _.trim(arr[1])
       });
     });
+    return materials;
+  }
+  if (curMonsterTag) {
+    shinkaMaterials = getMaterials(curMonsterTag.nextAll('.tooltip'));
     //process shinka monsters
-    let 
     curMonsterTag.nextAll('ul').find('>li').each((index, li) => {
-      const evoTags = $('li').find('>.EvoTarget');
-      const type = evoTags.eq(0).attr('href');
-      const shikaMonster_id = +evoTags.eq(1).attr('href').replace(/[^0-9]/g, '');
+      const evoTags = $(li).find('>.EvoTarget');
+      const isNormal = evoTags.length == 1;
+      const monster = {
+        monster_id: +evoTags.eq(isNormal ? 0 : 1).attr('href').replace(/[^0-9]/g, ''),
+        shinkaMaterials: getMaterials(evoTags.nextAll('.tooltip'))
+      };
+      if (isNormal) {
+        normalShinka = monster;
+      }
+      else {
+        const type = evoTags.eq(0).attr('href');
+        switch (type) {
+          case '/究極進化/':
+            megaShinkaMonsters.push(monster);
+            break;
+          case '/輔助進化/':
+            assistShinka = monster;
+            break;
+          case '/點陣進化/':
+            dotShinka = monster;
+            break;
+          case '/轉生進化/':
+            tenseiShinka = monster;
+        }
+      }
     });
-
+    //process shinka from
+    const fromItem = curMonsterTag.closest('ul').parent();
+    const evoTags = $(fromItem).find('>.EvoTarget');
+    if (evoTags.length > 0) {
+      const isNormal = evoTags.length == 1;
+      const monster = {
+        monster_id: +evoTags.eq(isNormal ? 0 : 1).attr('href').replace(/[^0-9]/g, ''),
+        shinkaMaterials: getMaterials(evoTags.eq(1).nextAll('.tooltip'))
+      };
+      shinkaFrom = monster;
+    }
   }
   return {
-    shinkaMaterials: materials
+    normalShinka,
+    shinkaFrom,
+    shinkaMaterials,
+    megaShinkaMonsters,
+    assistShinka,
+    dotShinka,
+    tenseiShinka,
   };
 };
 

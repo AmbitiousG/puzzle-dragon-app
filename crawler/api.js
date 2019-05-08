@@ -244,7 +244,8 @@ module.exports.getMonsterLeaderSkillId = async ({ monster_id, name }, { skill_na
   }
 }
 
-const getMonsterId = module.exports.getMonsterId = async ({ monster_id, name }) => {
+const getMonsterId = module.exports.getMonsterId = async ({ monster_id, name } = {}) => {
+  if (!monster_id) return null;
   try {
     const monster = await Monster.findOne({ monster_id });
     if (monster) {
@@ -295,4 +296,24 @@ module.exports.getAndUpdateMonsterIds = async (monsters = []) => {
     res[monster_id] = _.find(allMonsters, { monster_id })._id;
     return res;
   }, {});
+}
+
+module.exports.getShinkaMonsters = async ({
+  normalShinka,
+  shinkaFrom,
+  shinkaMaterials,
+  megaShinkaMonsters,
+  assistShinka,
+  dotShinka,
+  tenseiShinka
+}) => {
+  return {
+    normalShinka: await getMonsterId(normalShinka),
+    shinkaFrom: await getMonsterId(shinkaFrom),
+    shinkaMaterials: await Promise.all(_.map(shinkaMaterials, async monster => await getMonsterId(monster))),
+    megaShinkaMonsters: await getMonsterId(megaShinkaMonsters),
+    assistShinka: await getMonsterId(assistShinka),
+    dotShinka: await getMonsterId(dotShinka),
+    tenseiShinka: await getMonsterId(tenseiShinka)
+  }
 }

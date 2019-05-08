@@ -1,5 +1,5 @@
 const { PARSE_MONSTER_FROM_DB, PARSE_MONSTER_FROM_HTML } = require('./const');
-const { getMonsterImage, getMonsterAttrId, getMonsterTypeId, getMonsterAwokenSkillId, getMonsterActiveSkillId, getMonsterLeaderSkillId, getDungeonId } = require('./api');
+const { getMonsterImage, getMonsterAttrId, getMonsterTypeId, getMonsterAwokenSkillId, getMonsterActiveSkillId, getMonsterLeaderSkillId, getDungeonId, getShinkaMonsters } = require('./api');
 const { processMonster } = require('./htmlProcess/processMonster');
 const _ = require('lodash');
 
@@ -32,6 +32,7 @@ module.exports = class Monster {
       active_skill: await getMonsterActiveSkillId(monsterInfo, plainObj.active_skill),
       leader_skill: await getMonsterLeaderSkillId(monsterInfo, plainObj.leader_skill),
       fromDungeonList: await Promise.all(_.map(plainObj.fromDungeonList, async dungeon => await getDungeonId(dungeon))),
+      ...await getShinkaMonsters(plainObj),
     }
     // console.log(monsterObj);
     return monsterObj;
