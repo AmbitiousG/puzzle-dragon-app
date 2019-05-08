@@ -136,6 +136,14 @@ const processActiveSkill = ($, table) => {//active_skill...
   };
 };
 
+const processAssisAndKillerAwoken = ($, table) => {
+  const rows = $(table).find('>tbody>tr');
+  const isAssistive = rows.eq(1).text().indexOf('✔') != -1;
+  return {
+    isAssistive
+  };
+};
+
 const processAwokens = ($, table) => {
   const rows = table.find('>tbody > tr')
   let awokenSkills = [];
@@ -183,6 +191,7 @@ module.exports.processMonster = (monster_id, $) => {
     ...processMonsterStatus($, $(mainTables[2])),
     ...processMonsterValue($, $(mainTables[3])),
     ...processActiveSkill($, $(mainTables[4])),
+    ...processAssisAndKillerAwoken($, $(mainTables[5])),
     ...processAwokens($, $(mainTables[6])),
     ...processLeaderSkill($, $(mainTables[7])),
   }

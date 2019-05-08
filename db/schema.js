@@ -89,7 +89,6 @@ const monsterSchema = new mongoose.Schema({
   feed_exp_str: String,
   feed_exp_max: Number,
   active_skill: { type: objectIdType, ref: "ActiveSkill" },
-  active_skill_same_monsters: [{ type: objectIdType, ref: "Monster" }],
   leader_skill: { type: objectIdType, ref: "LeaderSkill" },
   awoken_skills: [{ type: objectIdType, ref: "AwokenSkill" }],
   break_skills: [{ type: objectIdType, ref: "AwokenSkill" }],
