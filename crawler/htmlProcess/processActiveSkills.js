@@ -1,22 +1,5 @@
 const _ = require('lodash');
-const DROP_TYPES = {
-  "fire": "[火]",
-  "water": "[水]",
-  "wood": "[木]",
-  "light": "[光]",
-  "dark": "[暗]",
-  "heart": "[回复]",
-  "fire+": "[火强化]",
-  "water+": "[水强化]",
-  "wood+": "[木强化]",
-  "light+": "[光强化]",
-  "dark+": "[暗强化]",
-  "heart+": "[回复强化]",
-  "dead": "[邪魔]",
-  "poison": "[毒]",
-  "poison+": "[猛毒]",
-  "bomb": "[炸弹]"
-}
+const { DROP_TYPES } = require('../const');
 
 const processActiveSkillsCN = $ => {
   let skills = [];
@@ -38,10 +21,10 @@ const processActiveSkillsCN = $ => {
             else if (node.name == 'img') {
               let src = $(node).attr('src');
               let matched = src.match(/.*\/(.*?)\.png.*/);
-              if(matched && matched.length > 0) {
+              if (matched && matched.length > 0) {
                 let imgName = matched[1].toLowerCase();
                 DROP_TYPES[imgName] && arrNodes.push(DROP_TYPES[imgName]);
-                if(src.indexOf('change.gif') != -1) {
+                if (src.indexOf('change.gif') != -1) {
                   arrNodes.push('=>');
                 }
               }

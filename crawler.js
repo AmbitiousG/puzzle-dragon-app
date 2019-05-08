@@ -2,14 +2,15 @@ const request = require("request");
 const {fetchMonsters, fetchAwokens, fetchActiveSkills} = require('./crawler/index');
 const { getFetchingArray } = require('./crawler/utils');
 const { connDB } = require('./db/index');
-const { Monster, AwokenSkill } = require('./db/schema');
+const { Monster, AwokenSkill, ActiveSkill } = require('./db/schema');
 const _ = require('lodash');
 
 const startFetch = async () => {
   await connDB();
-  // fetchMonsters(getFetchingArray());
+  fetchMonsters(getFetchingArray());
   // await fetchAwokens(true);
-  await fetchActiveSkills();
+  // await fetchActiveSkills(true);
+  // await fetchActiveSkills(false);
   // const monsters = await Monster
   //   .find({})
   //   .populate('awoken_skills', 'skill_name -_id')
@@ -22,6 +23,16 @@ const startFetch = async () => {
   //   monster_sub_attr: m.monster_sub_attr && m.monster_sub_attr.name,
   //   awoken_skills: _.map(m.awoken_skills, 'skill_name')
   // }));
+  // let res = await ActiveSkill.find({}).limit(100).populate('same_monsters', 'name monster_id -_id');
+  // res = _.map(res, skill => {
+  //   return {
+  //     ..._.pick(skill, ['skill_name', 'skill_description']),
+  //     same_monsters: _.map(skill.same_monsters, m => _.pick(m, ['name', 'monster_id']))
+  //   };
+  // });
+  // console.log(res); 
+  // const monster = await Monster.findOne({monster_id: 5301});
+  // console.log(monster);
 }
 
 startFetch();

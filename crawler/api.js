@@ -168,10 +168,18 @@ module.exports.getMonsterAwokenSkillId = async ({ skill_name, skill_description,
   }
 }
 
-module.exports.getMonsterActiveSkillId = async ({ skill_name, skill_description_cn, skill_init_turn, skill_max_turn }) => {
+module.exports.getMonsterActiveSkillId = async ({monster_id, name}, { skill_name, skill_description_cn, skill_init_turn, skill_max_turn }) => {
   try {
     const skill = await ActiveSkill.findOne({ skill_name });
     if (skill) {
+      const monsterId = await getMonsterId({monster_id, name});
+      _.assign(skill, {
+        skill_description_cn,
+        skill_init_turn,
+        skill_max_turn,
+        same_monsters: _.unionBy(skill.same_monsters || [], [monsterId], item => item.toString())
+      });
+      await skill.save();
       return skill._id;
     }
     else {
@@ -189,15 +197,16 @@ module.exports.getMonsterActiveSkillId = async ({ skill_name, skill_description_
   }
 }
 
-module.exports.getMonsterId = async (id) => {
+const getMonsterId = module.exports.getMonsterId = async ({monster_id, name}) => {
   try {
-    const monster = await Monster.findOne({ monster_id: id });
+    const monster = await Monster.findOne({ monster_id });
     if (monster) {
       return monster._id;
     }
     else {
       const result = await Monster.collection.insertOne({
-        monster_id: id
+        monster_id,
+        name
       });
       return result.insertedId;
     }

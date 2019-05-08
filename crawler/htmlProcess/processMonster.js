@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const { DROP_TYPES } = require('../const');
 
 const processMainInfo = ($, table) => {//avatarUrl
   // rare
@@ -115,7 +116,30 @@ const processActiveSkill = ($, table) => {//active_skill...
   activeSkill.skill_max_turn = +_.trim(cells.eq(4).text());
 
   //row1
-  activeSkill.skill_description_cn = $(rows[1]).find('td').html();
+  let arrNodes = [];
+  for (const node of rows.eq(1).find('td').get(0).childNodes) {
+    if (node.type == 'text') {
+      arrNodes.push(_.trim(node.nodeValue));
+    }
+    else if (node.type == 'tag') {
+      if (node.name == 'br') {
+        arrNodes.push('\n');
+      }
+      else if (node.name == 'img') {
+        let src = $(node).attr('src');
+        let matched = src.match(/.*\/(.*?)\.png.*/);
+        if (matched && matched.length > 0) {
+          let imgName = matched[1].toLowerCase();
+          DROP_TYPES[imgName] && arrNodes.push(DROP_TYPES[imgName]);
+          if (src.indexOf('change.gif') != -1) {
+            arrNodes.push('=>');
+          }
+        }
+      }
+    }
+  }
+
+  activeSkill.skill_description_cn = arrNodes.join('');
 
   //row2
   // let aTags = $(rows[2]).find('.tooltip');
@@ -156,9 +180,10 @@ const processCharactorImage = ($) => {
   return { charactorImageUrl: td.find('img').attr('src') };
 };
 
-module.exports.processMonster = ($) => {
+module.exports.processMonster = (monster_id, $) => {
   const mainTables = $('.previous_next').closest('table').parent().find('>table');
   return {
+    monster_id,
     ...processCharactorImage($),
     ...processMainInfo($, $(mainTables[1])),
     ...processMonsterStatus($, $(mainTables[2])),
