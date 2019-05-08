@@ -307,6 +307,7 @@ module.exports.getShinkaMonsters = async ({
   dotShinka,
   tenseiShinka
 }) => {
+  let materials = _.concat(shinkaMaterials || [], _(megaShinkaMonsters || []).map('shinkaMaterials').flatten().compact().value())
   return {
     normalShinka: await getMonsterId(normalShinka),
     shinkaFrom: await getMonsterId(shinkaFrom),
