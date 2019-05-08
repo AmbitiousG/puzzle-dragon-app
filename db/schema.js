@@ -45,11 +45,6 @@ const monsterAwokenSkillSchema = new mongoose.Schema({
 });
 
 const dungeonSchema = new mongoose.Schema({
-  dungeon_id: {
-    type: Number,
-    unique: true,
-    index: true
-  },
   dungeon_name: String
 });
 
@@ -96,11 +91,11 @@ const monsterSchema = new mongoose.Schema({
   fromEvolution: Boolean,
   fromShop: Boolean,
   fromFriendship: Boolean,
-  fromColabo: Boolean,
-  colaboName: String,
+  fromGatcha: Boolean,
+  gachaName: String,
   fromDungeon: Boolean,
   fromDungeonList: [{ type: objectIdType, ref: "Dungeon" }],
-  monsterSwitchable: Boolean,
+  switchable: Boolean,
   shinkaMonster: { type: objectIdType, ref: "Monster" },
   megaShinkaMonster: [{ type: objectIdType, ref: "Monster" }],
   shinkaFrom: { type: objectIdType, ref: "Monster" },

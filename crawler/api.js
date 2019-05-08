@@ -3,7 +3,7 @@ const request = require('request');
 const cheerio = require('cheerio');
 const { generateUrl } = require('./utils');
 const { proxy } = require('../db-config');
-const { Monster, MonsterAttr, MonsterType, AwokenSkill, ActiveSkill, LeaderSkill } = require('../db/schema');
+const { Monster, MonsterAttr, MonsterType, AwokenSkill, ActiveSkill, LeaderSkill, Dungeon } = require('../db/schema');
 const { AWOKEN_SKILL_PAGE_URL, AWOKEN_SKILL_PAGE_JP_URL, ACTIVE_SKILL_PAGE_JP_URL, ACTIVE_SKILL_PAGE_URL, LEADER_SKILL_PAGE_JP_URL } = require('./const');
 const { processAwokens } = require('./htmlProcess/processAwokens');
 const { processActiveSkills } = require('./htmlProcess/processActiveSkills');
@@ -254,6 +254,24 @@ const getMonsterId = module.exports.getMonsterId = async ({ monster_id, name }) 
       const result = await Monster.collection.insertOne({
         monster_id,
         name
+      });
+      return result.insertedId;
+    }
+  }
+  catch (e) {
+    console.log(e);
+  }
+}
+
+const getDungeonId = module.exports.getDungeonId = async ({ dungeon_name }) => {
+  try {
+    const dungeon = await Dungeon.findOne({ dungeon_name });
+    if (dungeon) {
+      return dungeon._id;
+    }
+    else {
+      const result = await Dungeon.collection.insertOne({
+        dungeon_name
       });
       return result.insertedId;
     }

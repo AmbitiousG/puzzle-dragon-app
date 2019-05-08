@@ -1,6 +1,11 @@
 const _ = require('lodash');
 const { processCellContent } = require('./utils');
 
+const processCharactorImage = ($) => {
+  const td = $('.previous_next').next();
+  return { charactorImageUrl: td.find('img').attr('src') };
+};
+
 const processMainInfo = ($, table) => {//avatarUrl
   // rare
   // name
@@ -54,7 +59,7 @@ const processMainInfo = ($, table) => {//avatarUrl
   //
   let td = table.find('> tbody > tr:nth-child(2) > td');
   let matched = _.trim(td.text()).match(/成長類型: (\d+)萬　COST: (\d+)/);
-  if(matched) {
+  if (matched) {
     info.growth = +matched[1];
     info.cost = +matched[2];
   }
@@ -119,7 +124,7 @@ const processActiveSkill = ($, table) => {//active_skill...
   let cells = $(rows[0]).find('td');
   activeSkill.skill_name = _.trim(cells.eq(0).find('span').text());
   activeSkill.skill_init_turn = +_.trim(cells.eq(2).text());
-  activeSkill.skill_max_turn = +_.trim(cells.eq(4).text());
+  activeSkill.skill_max_turn = +_.trim(cells.eq(4).text().replace(/[^0-9]/g, ''));
 
   //row1
   activeSkill.skill_description_cn = processCellContent($, rows.eq(1).find('td').get(0));
@@ -177,13 +182,59 @@ const processLeaderSkill = ($, table) => {//leader_skill
   };
 };
 
-const processCharactorImage = ($) => {
-  const td = $('.previous_next').next();
-  return { charactorImageUrl: td.find('img').attr('src') };
+const processExtraInfo = ($, table) => {
+  const rows = table.find('>tbody>tr').slice(1);
+  let fromEvolution;
+  let fromShop;
+  let fromFriendship;
+  let fromGatcha;
+  let gachaName;
+  let fromDungeon;
+  let fromDungeonList = [];
+  let switchable;
+  function getTxt(row) {
+    return row.find('td').eq(1).text();
+  }
+  fromEvolution = getTxt(rows.eq(0)).indexOf('✔') != -1;
+  fromShop = getTxt(rows.eq(1)).indexOf('✔') != -1;
+  fromFriendship = getTxt(rows.eq(2)).indexOf('✔') != -1;
+  fromGatcha = getTxt(rows.eq(3)).indexOf('✖') == -1;
+  if (fromGatcha) {
+    gachaName = _.trim(getTxt(rows.eq(3)));
+  }
+  // fromDungeon = getTxt(rows.eq(4)).indexOf('✔');
+  rows.eq(4).find('a').each((index, aTag) => {
+    fromDungeonList.push({
+      dungeon_name: _.trim($(aTag).text())
+    });
+  });
+  fromDungeon = fromDungeonList.length > 0;
+
+  switchable = getTxt(rows.eq(5)).indexOf('寵物交換所') != -1;
+
+  return {
+    fromEvolution,
+    fromShop,
+    fromFriendship,
+    fromGatcha,
+    gachaName,
+    fromDungeon,
+    fromDungeonList,
+    switchable
+  };
+};
+
+const processEvolution = ($, table) => {
+  
+  return {};
 };
 
 module.exports.processMonster = (monster_id, $) => {
   const mainTables = $('.previous_next').closest('table').parent().find('>table');
+  let extraInfoTable = mainTables.eq(8);
+  if (extraInfoTable.find('>tbody>tr').eq(0).text().indexOf('入手方法') == -1) {
+    extraInfoTable = extraInfoTable.nextAll('table').eq(0);
+  }
   return {
     monster_id,
     ...processCharactorImage($),
@@ -194,5 +245,7 @@ module.exports.processMonster = (monster_id, $) => {
     ...processAssisAndKillerAwoken($, $(mainTables[5])),
     ...processAwokens($, $(mainTables[6])),
     ...processLeaderSkill($, $(mainTables[7])),
+    ...processExtraInfo($, extraInfoTable),
+    ...processEvolution($, extraInfoTable.nextAll('table').eq(0))
   }
 }
