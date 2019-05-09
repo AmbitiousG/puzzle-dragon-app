@@ -284,12 +284,19 @@ const getDungeonId = module.exports.getDungeonId = async ({ dungeon_name }) => {
 
 module.exports.getAndUpdateMonsterIds = async (monsters = []) => {
   try {
-    await Monster.collection.insertMany(monsters, {
-      ordered: false
-    });
+    // await Monster.collection.insertMany(monsters, {
+    //   ordered: false
+    // });
+    const bulkOp = Monster.collection.initializeOrderedBulkOp();
+    for (const monster of monsters) {
+      bulkOp.find({ monster_id: monster.monster_id }).upsert().updateOne({
+        $set: monster
+      });
+    }
+    monsters.length > 0 && await bulkOp.execute();
   }
   catch (e) {
-    console.log(e);
+    // console.log(e);
   }
   const allMonsters = await Monster.find({}, { monster_id: 1 });
   return _.reduce(monsters, (res, { monster_id }) => {
@@ -307,14 +314,24 @@ module.exports.getShinkaMonsters = async ({
   dotShinka,
   tenseiShinka
 }) => {
-  let materials = _.concat(shinkaMaterials || [], _(megaShinkaMonsters || []).map('shinkaMaterials').flatten().compact().value())
+  let materials = _.concat(shinkaMaterials || [],
+    _(megaShinkaMonsters || []).map('shinkaMaterials').flatten().compact().value(),
+    _(megaShinkaMonsters || []).map(m => _.pick(m, 'monster_id')).compact().value());
+  let monsterObj = await module.exports.getAndUpdateMonsterIds(materials);
+  shinkaMaterials = _.map(shinkaMaterials, material => monsterObj[material.monster_id]);
+  megaShinkaMonsters = _.map(megaShinkaMonsters, monster => ({
+    ...monster,
+    shinkaMaterials: _.map(monster.shinkaMaterials, m => monsterObj[m.monster_id])
+  }));
+  monsterObj = await module.exports.getAndUpdateMonsterIds(_.compact([...megaShinkaMonsters, normalShinka, shinkaFrom, assistShinka, dotShinka, tenseiShinka]));
+  megaShinkaMonsters = _.map(megaShinkaMonsters, monster => monsterObj[monster.monster_id]);
   return {
-    normalShinka: await getMonsterId(normalShinka),
-    shinkaFrom: await getMonsterId(shinkaFrom),
-    shinkaMaterials: await Promise.all(_.map(shinkaMaterials, async monster => await getMonsterId(monster))),
-    megaShinkaMonsters: await getMonsterId(megaShinkaMonsters),
-    assistShinka: await getMonsterId(assistShinka),
-    dotShinka: await getMonsterId(dotShinka),
-    tenseiShinka: await getMonsterId(tenseiShinka)
+    normalShinka: normalShinka ? monsterObj[normalShinka.monster_id] : null,
+    shinkaFrom: shinkaFrom ? monsterObj[shinkaFrom.monster_id] : null,
+    shinkaMaterials,
+    megaShinkaMonsters,
+    assistShinka: assistShinka ? monsterObj[assistShinka.monster_id] : null,
+    dotShinka: dotShinka ? monsterObj[dotShinka.monster_id] : null,
+    tenseiShinka: tenseiShinka ? monsterObj[tenseiShinka.monster_id] : null
   }
 }
