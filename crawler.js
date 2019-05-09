@@ -1,5 +1,5 @@
 const request = require("request");
-const {fetchMonsters, fetchAwokens, fetchActiveSkills, fetchLeaderSkills} = require('./crawler/index');
+const { fetchMonsters, fetchAwokens, fetchActiveSkills, fetchLeaderSkills } = require('./crawler/index');
 const { getFetchingArray } = require('./crawler/utils');
 const { connDB } = require('./db/index');
 const { Monster, AwokenSkill, ActiveSkill } = require('./db/schema');
@@ -7,13 +7,13 @@ const _ = require('lodash');
 
 const startFetch = async () => {
   await connDB();
-  await fetchMonsters(getFetchingArray());
+  // await fetchMonsters(getFetchingArray());
   // await fetchAwokens(true);
   // await fetchAwokens(false);
   // await fetchActiveSkills(true);
   // await fetchActiveSkills(false);
   // await fetchLeaderSkills(true);
-  console.log('end');
+  // console.log('end');
   // const monsters = await Monster
   //   .find({})
   //   .populate('awoken_skills', 'skill_name -_id')
@@ -34,8 +34,17 @@ const startFetch = async () => {
   //   };
   // });
   // console.log(res); 
-  // const monster = await Monster.findOne({monster_id: 5301});
-  // console.log(monster);
+  const monster = await Monster.findOne({ monster_id: 1 });
+  const doc = await Monster.aggregate([{
+    $match: { monster_id: 1 }
+  }, {
+    "$project": { "arrayofkeyvalue": { "$objectToArray": "$$ROOT" } }
+  },
+  {
+    "$project": { "keys": "$arrayofkeyvalue.k" }
+  }]);
+  console.log(monster, _.keys(monster));
+  console.log(Object.keys(monster), Object.keys(monster).length)
 }
 
 startFetch();
