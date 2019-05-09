@@ -4,10 +4,10 @@ module.exports.PARSE_MONSTER_FROM_DB = 1;
 module.exports.PARSE_MONSTER_FROM_HTML = 2;
 module.exports.REQUEST_INTERVAL_MAX = 1500;
 module.exports.REQUEST_INTERVAL_MIN = 300;
-module.exports.FETCHING_START_ID = 129;
-module.exports.FETCHING_LENGTH = 1;
+module.exports.FETCHING_START_ID = 1;
+module.exports.FETCHING_LENGTH = 5302;
 
-module.exports.SAVE_AMOUNT = 50;
+module.exports.SAVE_AMOUNT = 10;
 
 module.exports.AWOKEN_SKILL_PAGE_URL = "http://pad.skyozora.com/skill/%E8%A6%BA%E9%86%92%E6%8A%80%E8%83%BD%E4%B8%80%E8%A6%BD/";
 module.exports.AWOKEN_SKILL_PAGE_JP_URL = "https://www18.atwiki.jp/pazdra/pages/3778.html";

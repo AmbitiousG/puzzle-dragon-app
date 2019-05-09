@@ -7,7 +7,7 @@ const _ = require('lodash');
 
 const startFetch = async () => {
   await connDB();
-  fetchMonsters(getFetchingArray());
+  await fetchMonsters(getFetchingArray());
   // await fetchAwokens(true);
   // await fetchAwokens(false);
   // await fetchActiveSkills(true);

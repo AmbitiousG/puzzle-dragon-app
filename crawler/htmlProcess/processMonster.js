@@ -125,6 +125,9 @@ const processActiveSkill = ($, table) => {//active_skill...
   activeSkill.skill_name = _.trim(cells.eq(0).find('span').text());
   activeSkill.skill_init_turn = +_.trim(cells.eq(2).text());
   activeSkill.skill_max_turn = +_.trim(cells.eq(4).text().replace(/[^0-9]/g, ''));
+  if(activeSkill.skill_name == "無") {
+    activeSkill.skill_init_turn = activeSkill.skill_max_turn = 0;
+  }
 
   //row1
   activeSkill.skill_description_cn = processCellContent($, rows.eq(1).find('td').get(0));

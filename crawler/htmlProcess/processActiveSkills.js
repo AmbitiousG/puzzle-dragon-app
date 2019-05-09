@@ -7,7 +7,6 @@ const processActiveSkillsCN = $ => {
     $(table).find('>tbody>tr').each((rowIndex, row) => {
       if (rowIndex > 0) {
         let skill = {};
-        let arrNodes = [];
         const cells = $(row).find('>td');
         skill.skill_name = _.trim(cells.eq(0).text());
         skill.skill_description_cn = processCellContent($, cells.get(1));
