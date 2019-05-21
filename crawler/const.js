@@ -5,7 +5,7 @@ module.exports.PARSE_MONSTER_FROM_HTML = 2;
 module.exports.REQUEST_INTERVAL_MAX = 1500;
 module.exports.REQUEST_INTERVAL_MIN = 300;
 module.exports.FETCHING_START_ID = 1;
-module.exports.FETCHING_LENGTH = 5302;
+module.exports.FETCHING_LENGTH = 5313;
 
 module.exports.SAVE_AMOUNT = 10;
 

@@ -7,7 +7,7 @@ const _ = require('lodash');
 
 const startFetch = async () => {
   await connDB();
-  // await fetchMonsters(getFetchingArray());
+  await fetchMonsters(getFetchingArray());
   // await fetchAwokens(true);
   // await fetchAwokens(false);
   // await fetchActiveSkills(true);
@@ -34,17 +34,17 @@ const startFetch = async () => {
   //   };
   // });
   // console.log(res); 
-  const monster = await Monster.findOne({ monster_id: 1 });
-  const doc = await Monster.aggregate([{
-    $match: { monster_id: 1 }
-  }, {
-    "$project": { "arrayofkeyvalue": { "$objectToArray": "$$ROOT" } }
-  },
-  {
-    "$project": { "keys": "$arrayofkeyvalue.k" }
-  }]);
-  console.log(monster, _.keys(monster));
-  console.log(Object.keys(monster), Object.keys(monster).length)
+  // const monster = await Monster.findOne({ monster_id: 1 });
+  // const doc = await Monster.aggregate([{
+  //   $match: { monster_id: 1 }
+  // }, {
+  //   "$project": { "arrayofkeyvalue": { "$objectToArray": "$$ROOT" } }
+  // },
+  // {
+  //   "$project": { "keys": "$arrayofkeyvalue.k" }
+  // }]);
+  // console.log(monster, _.keys(monster));
+  // console.log(Object.keys(monster), Object.keys(monster).length)
 }
 
 startFetch();

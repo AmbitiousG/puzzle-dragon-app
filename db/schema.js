@@ -56,6 +56,7 @@ const monsterSchema = new mongoose.Schema({
   },
   monster_types: [{ type: objectIdType, ref: "MonsterType" }],
   monster_avatar_base64: String,
+  monster_avatar_url: String,
   monster_image_url: String,
   name: String,
   name_cn: String,

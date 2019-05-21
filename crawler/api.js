@@ -119,12 +119,14 @@ module.exports.getMonsterImage = async ({ monster_id, avatarUrl, charactorImageU
     const monster = await Monster.findOne({ monster_id });
     if (!monster || !monster.monster_avatar_base64) {
       return {
-        monster_avatar_base64: await getImageBase64(avatarUrl),
+        // monster_avatar_base64: await getImageBase64(avatarUrl),
+        monster_avatar_url: avatarUrl,
         monster_image_url: charactorImageUrl
       };
     }
     else {
-      return _.pick(monster, ['monster_avatar_base64', 'monster_image_url']);
+      return _.pick(monster, ['monster_avatar_url', 'monster_image_url']);
+      // return _.pick(monster, ['monster_avatar_base64', 'monster_image_url']);
     }
   }
   catch (e) {
